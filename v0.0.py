@@ -9,9 +9,9 @@ dp = Dispatcher(bot)
 @dp.message_handler(commands="start")
 async def cmd_start(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    buttons = ["Обучение", "Проверка"]
+    buttons = ["Обучение", "Проверка", "Инструкции по мнемоническим правилам"]
     keyboard.add(*buttons)
-    await message.answer("Какой режим вы бы хотели попробовать?", reply_markup=keyboard)
+    await message.answer("Какой режим Вы бы хотели попробовать?", reply_markup=keyboard)
 
 if __name__ == '__main__':
    executor.start_polling(dp, skip_updates=True)
