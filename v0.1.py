@@ -34,10 +34,12 @@ async def send_welcome(message: types.Message):
 
 @dp.message_handler(commands=['help'])
 async def process_help_command(message: types.Message):
-    await message.reply("Доступные следующие команды: /r для регистрации , /t для обучения, 'play для игры ")
+    await message.reply("Доступные следующие команды:\n /register для регистрации  \n/train для обученияч\n"
+                        " /play для игры\n"
+                        "/configure, чтобы посмотреть свои карточки и создать новые ")
 
 
-@dp.message_handler(commands=['r'])
+@dp.message_handler(commands=['register'])
 async def process_registration(message: types.Message):
         await message.reply('Приступим к регистрации!\nЭто нужно, чтобы ваши мнемонические правила и пргогресс сохранялись')
         us_id = message.from_user.id
@@ -47,7 +49,7 @@ async def process_registration(message: types.Message):
         db_table_val(user_id=us_id, user_name=us_name, user_surname=us_sname, username=username)
         await message.reply('Вы добавлены в базу пользователей!')
 
-@dp.message_handler(commands=['t'])
+@dp.message_handler(commands=['train'])
 async def tutorial_guide(message: types.Message):
         await message.reply("Давайте приступим к обучению. \n Сейчас мы покажем вам примеры мнемонических правил"
                             " для столиц стран, которые помогут вам обучиться, поставьте +, если готовы")
@@ -72,8 +74,11 @@ async def show_examples(message: types.Message, state: FSMContext):
         cursor_db.execute(f'SELECT * FROM capitals WHERE  ID = {a}')
         data = cursor_db.fetchone()
         await message.reply(f'Страна: {data[1]} \n Cтолица: {data[2]} \n Мнемоническое правило: {data[3]}')
-        await message.reply(f'Показать ещё пример?')
-        await Form.ask_eche_primer.set()
+        if lst:
+            await message.reply(f'Показать ещё пример? \n Для выхода нажмите /cancel')
+            await Form.ask_eche_primer.set()
+        else:
+            await message.reply(f'Этот пример был последним, перейдите, пожалуйста, в другой раздел /help')
 
 @dp.message_handler(state=Form.ask_eche_primer)
 async def asking(message: types.Message, state: FSMContext):
@@ -87,6 +92,14 @@ async def asking(message: types.Message, state: FSMContext):
 @dp.message_handler(commands=['play'])
 async def tutorial_guide(message: types.Message):
     await message.reply("Начнем игру, предлагаем вам в процессе создавать свои мнемонические правила")
+
+@dp.message_handler(commands=['configure'])
+async def process_registration(message: types.Message):
+    await message.reply('Покажем все мнемонические правила, которые у вас есть')
+    cursor_db.execute(f'SELECT * FROM capitals WHERE  mnemonic_rule IS NOT NULL')
+    data = cursor_db.fetchone()
+    await message.reply(f'{data}')
+
 
 @dp.message_handler()
 async def process_registration(message: types.Message):
