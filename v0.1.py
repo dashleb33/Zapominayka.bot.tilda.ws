@@ -7,7 +7,7 @@ import sqlite3
 import random as r
 
 
-bot = Bot(token="5648590997:AAHYn7hqS7ZJMfpQmwC7wgq6BGAFuN8qY4E")
+bot = Bot(token="______")
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
@@ -137,11 +137,12 @@ async def tutorial_guide(message: types.Message):
     await Form.play.set()
 
 
+
 # раздел "игра", проверка ответа
 @dp.message_handler(state=Form.play)
 async def asking(message: types.Message, state: FSMContext):
     answer = message.text
-    if answer.lower() in capital_for_play.lower():
+    if answer.lower() ==  capital_for_play.lower():
         await message.reply(f'Верно! для продолжения /play, для выхода /cancel ')
         await state.finish()
     elif answer == '/hint':
