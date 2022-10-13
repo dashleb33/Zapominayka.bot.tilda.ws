@@ -7,7 +7,7 @@ import sqlite3
 import random as r
 
 
-bot = Bot(token="5752954362:AAE0_BaG6xe8Vc_4OFIYLsTZpUzQjgiB0DI")
+bot = Bot(token="5648590997:AAHYn7hqS7ZJMfpQmwC7wgq6BGAFuN8qY4E")
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
@@ -21,6 +21,8 @@ class Form(StatesGroup):
     ask_eche_primer = State()
     strana = State()
     pravilo = State()
+    play = State()
+    prodolzhaem = State()
 
 
 # добавление пользователя в базу данных
@@ -36,8 +38,9 @@ async def send_welcome(message: types.Message):
 
 @dp.message_handler(commands=['help'])
 async def process_help_command(message: types.Message):
-    await message.reply("Доступные следующие команды:\n /register для регистрации  \n/train для обученияч\n"
-                        " /play для игры \n"
+    await message.reply("Доступные следующие команды:\n /register для регистрации  \n"
+                        "/train для обучения\n"
+                        " /newplay для игры \n"
                         "/configure - посмотреть свои мнемонические правила \n"
                         "/show_empty - показать пустые карточки \n"
                         "/create - создать свои мнемонические карточки")
@@ -46,7 +49,7 @@ async def process_help_command(message: types.Message):
 
 @dp.message_handler(commands=['register'])
 async def process_registration(message: types.Message):
-        await message.reply('Приступим к регистрации!\nЭто нужно, чтобы ваши мнемонические правила и пргогресс сохранялись')
+        await message.reply('Приступим к регистрации!\nЭто нужно, чтобы ваши мнемонические правила и прогресс сохранялись')
         us_id = message.from_user.id
         us_name = message.from_user.first_name
         us_sname = message.from_user.last_name
@@ -98,10 +101,54 @@ async def asking(message: types.Message, state: FSMContext):
         await message.reply('Выберете другое в меню.')
         await state.finish()
 
+@dp.message_handler(commands=['newplay'])
+async def tutorial_guide(message: types.Message):
+    global play_primers
+    play_primers = list(range(11, 54))
+    r.shuffle(play_primers)
+    await message.reply('Мы сгененировали уникальную последовательность для вас, нажмите /play для игры')
 
 @dp.message_handler(commands=['play'])
 async def tutorial_guide(message: types.Message):
-    await message.reply("Начнем игру, предлагаем вам в процессе создавать свои мнемонические правила")
+    global capital_for_play
+    global strana_for_play
+    id_for_play = play_primers.pop()
+    cursor_db.execute(f'SELECT Country, Capital FROM capitals WHERE  ID = {id_for_play}')
+    data = cursor_db.fetchone()
+    strana_for_play = data[0]
+    capital_for_play = data[1]
+    await message.reply(f'Напишите столицу страны "{strana_for_play}"  \n'
+                        'либо /cancel, чтобы выйти')
+    await Form.play.set()
+
+
+@dp.message_handler(state=Form.play)
+async def asking(message: types.Message, state: FSMContext):
+    answer = message.text
+    if answer.lower() in capital_for_play.lower():
+        await message.reply(f'Верно! для продолжения /play, для выхода /cancel ')
+        await state.finish()
+    else:
+        await message.reply('Неправильно, попробуйте ещё раз, для выхода /cancel, для получения ответа /otvet')
+
+@dp.message_handler(commands=['otvet'])
+async def tutorial_guide(message: types.Message):
+    await message.reply(f'{capital_for_play}, для продолжения игры /play')
+
+
+
+
+async def show_examples(message: types.Message, state: FSMContext):
+    if lst:
+        a = lst.pop()
+        cursor_db.execute(f'SELECT * FROM capitals WHERE  ID = {a}')
+        data = cursor_db.fetchone()
+        await message.reply(f'Страна: {data[1]} \n Cтолица: {data[2]} \n Мнемоническое правило: {data[3]}')
+        if lst:
+            await message.reply(f'Показать ещё пример? \n Для выхода нажмите /cancel')
+            await Form.ask_eche_primer.set()
+        else:
+            await message.reply(f'Этот пример был последним, перейдите, пожалуйста, в другой раздел /help')
 
 @dp.message_handler(commands=['configure'])
 async def process_registration(message: types.Message):
@@ -130,7 +177,8 @@ async def chose_strana(message: types.Message, state: FSMContext):
     cursor_db.execute(f"SELECT Country, Capital  FROM capitals WHERE mnemonic_rule IS NULL")
     data = cursor_db.fetchall()
     for i in data:
-        if answer.lower().capitalize() in i:
+        i =[j.lower() for j in i]
+        if answer.lower() in i:
             global strana1
             strana1 = answer
             await Form.pravilo.set()
@@ -145,14 +193,15 @@ async def ust_pravilo(message: types.Message, state: FSMContext):
     prpr = message.text
     await message.reply(prpr)
     await message.reply(strana1)
-    cursor_db.execute('UPDATE capita ls SET mnemonic_rule == ? WHERE Country == ?', (prpr, strana1))
+    cursor_db.execute('UPDATE capitals SET mnemonic_rule == ? WHERE Country == ?', (prpr, strana1))
     europe.commit()
-    await message.reply(f'Правило успешно создано {prpr}')
+    await message.reply(f'Правило для {strana1} успешно создано "{prpr}"')
 
 
 @dp.message_handler()
 async def process_registration(message: types.Message):
         await message.reply('Пожалуйста, выберете команду из меню, для вызова команд наберите /help')
+
 
 if __name__ == '__main__':
    executor.start_polling(dp, skip_updates=True)
