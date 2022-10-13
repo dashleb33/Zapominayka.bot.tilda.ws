@@ -7,7 +7,7 @@ import sqlite3
 import random as r
 
 
-bot = Bot(token="______")
+bot = Bot(token="5648590997:AAELVsuYGkQ12pIpxRGWwus7Cl4rh5Fy_QQ")
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
@@ -43,7 +43,7 @@ async def send_welcome(message: types.Message):
 # Меню HELP
 @dp.message_handler(commands=['help'])
 async def process_help_command(message: types.Message):
-    await message.reply("Доступные следующие команды:\n /register для регистрации  \n"
+    await message.reply("Доступны следующие команды:\n /register для регистрации  \n"
                         "/train для обучения\n"
                         " /newplay для игры \n"
                         "/configure - посмотреть свои мнемонические правила \n"
@@ -65,14 +65,16 @@ async def process_registration(message: types.Message):
 
 
 # Отмена действия пользователя
-@dp.message_handler(state='*', commands='cancel')
-@dp.message_handler(Text(equals='cancel', ignore_case=True), state='*')
+@dp.message_handler(state='*', commands=['cancel'])
 async def cancel_handler(message: types.Message, state: FSMContext):
-    current_state = await state.get_state()
-    if current_state is None:
-        return
     await state.finish()
-    await message.reply('Cancelled.')
+    await message.reply('Вы вышли из режима, список доступных команд '
+                        '\n /register для регистрации  '
+                        '\n /train для обучения\n'
+                        " /newplay для игры \n"
+                        "/configure - посмотреть свои мнемонические правила \n"
+                        "/show_empty - показать пустые карточки \n"
+                        "/create - создать свои мнемонические карточки")
 
 
 # Раздел train
