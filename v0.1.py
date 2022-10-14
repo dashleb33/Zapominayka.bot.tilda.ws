@@ -6,8 +6,9 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 import sqlite3
 import random as r
 
+r.seed = 37
 
-bot = Bot(token="5648590997:AAELVsuYGkQ12pIpxRGWwus7Cl4rh5Fy_QQ")
+bot = Bot(token="")
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
@@ -119,7 +120,7 @@ async def asking(message: types.Message, state: FSMContext):
 @dp.message_handler(commands=['newplay'])
 async def tutorial_guide(message: types.Message):
     global play_primers
-    play_primers = list(range(11, 54))
+    play_primers = list(range(8, 13))
     r.shuffle(play_primers)
     await message.reply('Мы сгененировали уникальную последовательность для вас, нажмите /play для игры')
 
@@ -148,11 +149,18 @@ async def asking(message: types.Message, state: FSMContext):
         await message.reply(f'Верно! для продолжения /play, для выхода /cancel ')
         await state.finish()
     elif answer == '/hint':
-        await message.reply(f'{capital_for_play}, для продолжения игры /play')
+        cursor_db.execute('SELECT mnemonic_rule FROM capitals WHERE  Country == ?',(strana_for_play,))
+        data = cursor_db.fetchone()
+        data = str(*data)
+        if not 'None' in data:
+            await message.reply(f'Ваше мнемоническое правило для страны "{data}", попробуйте отгадать или для продолжения игры /play')
+        else:
+            await message.reply(f'У вас нет мнемонического правила для страны "{strana_for_play}", поробуйте отгадать ещё раз или /hint_max для ответа ')
+    elif answer == '/hint_max':
         await state.finish()
+        await message.reply(f'Ответ: {capital_for_play}, для продолжения игры /play, список команд /help')
     else:
-        await message.reply('Неправильно, попробуйте ещё раз, для выхода /cancel, для получения ответа /hint')
-
+        await message.reply('Неправильно, попробуйте ещё раз, для выхода /cancel, для получения подсказки /hint')
 
 
 # раздел "правила", показать мнемонические правила
