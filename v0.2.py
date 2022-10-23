@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 import sqlite3
 import random as r
 
-bot = Bot(token="5648590997:AAELVsuYGkQ12pIpxRGWwus7Cl4rh5Fy_QQ")
+bot = Bot(token="")
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
