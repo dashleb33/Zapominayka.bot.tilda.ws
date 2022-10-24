@@ -21,6 +21,7 @@ dict_ques_answ = []
 right_answer = ''
 must_find = ''
 flag = ''
+all_themes = ''
 
 #  Машина состояний
 class Form(StatesGroup):
@@ -30,6 +31,7 @@ class Form(StatesGroup):
     pravilo = State()
     play = State()
     prodolzhaem = State()
+    chose_theme = State()
 
 
 # добавление пользователя в базу данных
@@ -43,26 +45,55 @@ def db_create_rule(user_id, mnemonic_rule):
                    (user_id, mnemonic_rule))
     conn.commit()
 
-@dp.message_handler(commands=['start '])
+@dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
     await message.reply("Привет!\nЯ ваш бот! \n Выберите, пожалуйста, меню: \n"
-                        "/subject - выбор темы для изучения"
-                        "/technic - выбор техники запоминания"
-                        "/history - ваша история")
+                        "/subject - выбор темы для изучения \n"
+                        "/technic - выбор техники запоминания \n"
+                        "/history - ваша история \n")
+
+# Отмена действия пользователя
+@dp.message_handler(state='*', commands=['cancel'])
+async def cancel_handler(message: types.Message, state: FSMContext):
+    await state.finish()
+    await message.reply('Вы вышли из режима, список доступных команд '
+                        '\n /register для регистрации  '
+                        '\n /train для обучения\n'
+                        " /newplay для игры \n"
+                        "/configure - посмотреть свои мнемонические правила \n"
+                        "/show_empty - показать пустые карточки \n"
+                        "/create - создать свои мнемонические карточки")
+
 
 @dp.message_handler(commands=['subject'])
 async def show_subjects(message: types.Message):
+    global all_themes
     cursor.execute('SELECT DISTINCT theme FROM questions_base')
-    data = cursor.fetchall()
-    print(data)
+    all_themes = [i[0] for i in cursor.fetchall()]
+    await message.reply('\n'.join(all_themes))
+    await message.reply('Напишите тему для изучения из предложенных')
+    await Form.chose_theme.set()
+
+@dp.message_handler(state=Form.chose_theme)
+async def chose_theme(message: types.Message, state: FSMContext):
+    global chosen_theme
+    answer = message.text
+    if answer in all_themes:
+        chosen_theme = answer
+        await message.reply(f'Тема установлена "{chosen_theme}"')
+        await state.finish()
+
+
+
+
 
 
 
 
 
 # @dp.message_handler(commands=['start'])
-# async def send_welcome(message: types.Message):
-#     await message.reply("Привет!\nЯ ваш бот!\n Вам доступны следующие команды /help, чтобы узнать список всех команд")
+# # async def send_welcome(message: types.Message):
+# #     await message.reply("Привет!\nЯ ваш бот!\n Вам доступны следующие команды /help, чтобы узнать список всех команд")
 
 
 # Меню HELP
@@ -92,17 +123,6 @@ async def process_registration(message: types.Message):
         await message.reply('Вы уже в базе пользователей!')
 
 
-# Отмена действия пользователя
-@dp.message_handler(state='*', commands=['cancel'])
-async def cancel_handler(message: types.Message, state: FSMContext):
-    await state.finish()
-    await message.reply('Вы вышли из режима, список доступных команд '
-                        '\n /register для регистрации  '
-                        '\n /train для обучения\n'
-                        " /newplay для игры \n"
-                        "/configure - посмотреть свои мнемонические правила \n"
-                        "/show_empty - показать пустые карточки \n"
-                        "/create - создать свои мнемонические карточки")
 
 
 # Раздел train
@@ -150,7 +170,7 @@ async def tutorial_guide(message: types.Message):
     global question_id
     global chosen_theme
     global dict_ques_answ
-    cursor.execute(f'SELECT question_id, question, right_answer FROM questions_base ') #WHERE theme = {chosen_theme}
+    cursor.execute(f"SELECT question_id, question, right_answer FROM questions_base WHERE theme = '{chosen_theme}'")
     dict_ques_answ = cursor.fetchall()
     r.shuffle(dict_ques_answ)
     await message.reply('Мы сгененировали уникальную последовательность для вас, нажмите /play для игры')
