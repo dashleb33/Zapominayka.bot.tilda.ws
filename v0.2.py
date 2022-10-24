@@ -1,12 +1,11 @@
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 import sqlite3
 import random as r
 
-bot = Bot(token="")
+bot = Bot(token="5648590997:AAELVsuYGkQ12pIpxRGWwus7Cl4rh5Fy_QQ")
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
@@ -44,9 +43,26 @@ def db_create_rule(user_id, mnemonic_rule):
                    (user_id, mnemonic_rule))
     conn.commit()
 
-@dp.message_handler(commands=['start'])
+@dp.message_handler(commands=['start '])
 async def send_welcome(message: types.Message):
-    await message.reply("Привет!\nЯ ваш бот!\n Используйте /help, чтобы узнать список всех команд")
+    await message.reply("Привет!\nЯ ваш бот! \n Выберите, пожалуйста, меню: \n"
+                        "/subject - выбор темы для изучения"
+                        "/technic - выбор техники запоминания"
+                        "/history - ваша история")
+
+@dp.message_handler(commands=['subject'])
+async def show_subjects(message: types.Message):
+    cursor.execute('SELECT DISTINCT theme FROM questions_base')
+    data = cursor.fetchall()
+    print(data)
+
+
+
+
+
+# @dp.message_handler(commands=['start'])
+# async def send_welcome(message: types.Message):
+#     await message.reply("Привет!\nЯ ваш бот!\n Вам доступны следующие команды /help, чтобы узнать список всех команд")
 
 
 # Меню HELP
@@ -172,7 +188,7 @@ async def asking(message: types.Message, state: FSMContext):
             cursor.execute(f"SELECT mnemonic_rule FROM user_rules WHERE user_id_plus_question = '{must_find}'")
             data = cursor.fetchone()
             data = str(*data)
-            await message.reply(f'Ваше мнемоническое правило для {question} "{data}", попробуйте отгадать или для продолжения игры /play')
+            await message.reply(f'Ваше мнемоническое правило для {question} "{data}", попробуйте отгадать ещё раз или /hint_max для ответа')
         except:
             await message.reply(f'У вас нет мнемонического правила для  "{question}", поробуйте отгадать ещё раз или /hint_max для ответа ')
     elif answer == '/hint_max':
