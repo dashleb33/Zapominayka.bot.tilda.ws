@@ -4,6 +4,8 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 import sqlite3
 import random as r
+import aiogram.utils.markdown as md
+import emojis
 
 bot = Bot(token="5648590997:AAELVsuYGkQ12pIpxRGWwus7Cl4rh5Fy_QQ")
 storage = MemoryStorage()
@@ -47,22 +49,45 @@ def db_create_rule(user_id, mnemonic_rule):
 
 @dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
-    await message.reply("Привет!\nЯ ваш бот! \n Выберите, пожалуйста, меню: \n"
-                        "/subject - выбор темы для изучения \n"
-                        "/technic - выбор техники запоминания \n"
-                        "/history - ваша история \n")
+    us_id = message.from_user.id
+    us_name = message.from_user.first_name
+    us_sname = message.from_user.last_name
+    username = message.from_user.username
+    try:
+        db_table_val(user_id=us_id, user_name=us_name, user_surname=us_sname, username=username)
+    finally:
+        await message.reply(emojis.encode("Привет :wave:\n Выберите, пожалуйста, меню: \n"
+                            "/subject - выбор темы для изучения \n"
+                            "/technic - техники запоминания \n"
+                            "/exam - начать заниматься"))
 
 # Отмена действия пользователя
 @dp.message_handler(state='*', commands=['cancel'])
 async def cancel_handler(message: types.Message, state: FSMContext):
     await state.finish()
-    await message.reply('Вы вышли из режима, список доступных команд '
-                        '\n /register для регистрации  '
-                        '\n /train для обучения\n'
-                        " /newplay для игры \n"
-                        "/configure - посмотреть свои мнемонические правила \n"
-                        "/show_empty - показать пустые карточки \n"
-                        "/create - создать свои мнемонические карточки")
+    await message.reply("Вы вышли из режима, список доступных команд\n"
+                       "/subject - выбор темы для изучения \n"
+                       "/technic - техники запоминания \n"
+                       "/exam - начать заниматься")
+
+
+@dp.message_handler(commands=['technic'])
+async def show_subjects(message: types.Message):
+    await message.reply(emojis.encode(f'В нашем боте используются следующие техники запоминания:'
+                        '1. _Название_: :slot_machine: *Метод ЦБК* \n'
+                        '_Краткое описание_: Техника основана на условном соответствии между согласными буквами и цифрами'
+                        ' от :zero:  до :nine: . '
+                        ' Дату необходимо перевести в слова, а из слов составить фразу связанную с запоминаемой датой \n'
+                        '\n'
+                        '2._Название_:  :loop: *Метод синонимов* \n'
+                        '_Краткое описание_: Техника основана на построении связной цепочки:chains:  '
+                        'между словом которое необходимо запомнить со словами схожими по значению и лексическому толкованию с запоминаемым словом. \n'
+                        '\n'
+                        '3._Название_:  :wavy_dash: *Метод Ассоциаций* \n'
+                        '_Краткое описание_: Метод основан на построении связи между двумя или более явлениями - '
+                        'Так, например, когда вы видите идущего с лыжами человека — вы вспоминаете о зиме (иными словами, лыжи:snowboarder:  ассоциируются с зимой:cold_face:'
+                        '\n \nДля выхода нажмите /cancel :x:')
+                        , parse_mode='MARKDOWN')
 
 
 @dp.message_handler(commands=['subject'])
@@ -70,8 +95,8 @@ async def show_subjects(message: types.Message):
     global all_themes
     cursor.execute('SELECT DISTINCT theme FROM questions_base')
     all_themes = [i[0] for i in cursor.fetchall()]
+    await message.reply(emojis.encode('Выберите и напишите тему для занятий из предложенных: :arrow_down:'))
     await message.reply('\n'.join(all_themes))
-    await message.reply('Напишите тему для изучения из предложенных')
     await Form.chose_theme.set()
 
 @dp.message_handler(state=Form.chose_theme)
@@ -80,23 +105,16 @@ async def chose_theme(message: types.Message, state: FSMContext):
     answer = message.text
     if answer in all_themes:
         chosen_theme = answer
-        await message.reply(f'Тема установлена "{chosen_theme}"')
+        await message.reply(emojis.encode(f'Тема установлена "{chosen_theme}"\n'
+                            f'Теперь вы можете начать заниматься или изучить техники мнемоники \n'
+                            f'/technic - техники запоминания :school_satchel: \n'
+                            f'/exam - начать заниматься :mortar_board:'))
         await state.finish()
+    else:
+        await message.reply(emojis.encode('Данной темы нет в списке, попробуйте ещё раз. \nДля выхода нажмите /cancel :x: '))
 
 
-
-
-
-
-
-
-
-# @dp.message_handler(commands=['start'])
-# # async def send_welcome(message: types.Message):
-# #     await message.reply("Привет!\nЯ ваш бот!\n Вам доступны следующие команды /help, чтобы узнать список всех команд")
-
-
-# Меню HELP
+#бывший раздел HELP
 @dp.message_handler(commands=['help'])
 async def process_help_command(message: types.Message):
     await message.reply("Доступны следующие команды:\n /register для регистрации  \n"
@@ -107,25 +125,23 @@ async def process_help_command(message: types.Message):
                         "/create - создать свои мнемонические карточки")
 
 
-# Раздел register
-@dp.message_handler(commands=['register'])
-async def process_registration(message: types.Message):
-    await message.reply('Приступим к регистрации!\n'
-                        'Это нужно, чтобы ваши мнемонические правила и прогресс сохранялись')
-    us_id = message.from_user.id
-    us_name = message.from_user.first_name
-    us_sname = message.from_user.last_name
-    username = message.from_user.username
-    try:
-        db_table_val(user_id=us_id, user_name=us_name, user_surname=us_sname, username=username)
-        await message.reply('Вы добавлены в базу пользователей!')
-    except:
-        await message.reply('Вы уже в базе пользователей!')
+#бывший раздел register Раздел register
+# @dp.message_handler(commands=['register'])
+# async def process_registration(message: types.Message):
+#     await message.reply('Приступим к регистрации!\n'
+#                         'Это нужно, чтобы ваши мнемонические правила и прогресс сохранялись')
+#     us_id = message.from_user.id
+#     us_name = message.from_user.first_name
+#     us_sname = message.from_user.last_name
+#     username = message.from_user.username
+#     try:
+#         db_table_val(user_id=us_id, user_name=us_name, user_surname=us_sname, username=username)
+#         await message.reply('Вы добавлены в базу пользователей!')
+#     except:
+#         await message.reply('Вы уже в базе пользователей!')
 
 
-
-
-# Раздел train
+#Раздел train
 @dp.message_handler(commands=['train'])
 async def tutorial_guide(message: types.Message):
         await message.reply("Давайте приступим к обучению. \n "
@@ -162,22 +178,40 @@ async def asking(message: types.Message, state: FSMContext):
         await message.reply('Выберете другое в меню.')
         await state.finish()
 
+@dp.message_handler(commands=['exam'])
+async def process_exam_menu(message: types.Message):
+    await message.reply("Доступны следующие команды: \n"
+                        "/newtrain - проверка знаний \n"
+                        "/configure - посмотреть созданные мнемонические правила \n"
+                        "/show_empty - показать пустые карточки по выбранной теме\n"
+                        "/create - создать мнемоническое правило")
 
-# Раздел "новая игра", генерация последовательности
-@dp.message_handler(commands=['newplay'])
-async def tutorial_guide(message: types.Message):
+
+# Раздел "игра", генерация последовательности
+@dp.message_handler(commands=['newtrain'])
+async def new_train(message: types.Message):
     global question
     global question_id
     global chosen_theme
     global dict_ques_answ
-    cursor.execute(f"SELECT question_id, question, right_answer FROM questions_base WHERE theme = '{chosen_theme}'")
-    dict_ques_answ = cursor.fetchall()
-    r.shuffle(dict_ques_answ)
-    await message.reply('Мы сгененировали уникальную последовательность для вас, нажмите /play для игры')
+    if chosen_theme:
+        cursor.execute(f"SELECT question_id, question, right_answer FROM questions_base WHERE theme = '{chosen_theme}'")
+        dict_ques_answ = cursor.fetchall()
+        r.shuffle(dict_ques_answ)
+        await message.reply(emojis.encode(f'Тема не выбрана, сгененированы вопросы по теме "{chosen_theme}"\n'
+                            f'/go для продолжения :white_check_mark:'))
+    else:
+        chosen_theme = 'страна-столица'
+        cursor.execute(f"SELECT question_id, question, right_answer FROM questions_base WHERE theme = 'страна-столица'")
+        dict_ques_answ = cursor.fetchall()
+        r.shuffle(dict_ques_answ)
+        await message.reply(emojis.encode(f'Тема не выбрана, сгененированы вопросы '
+                                          f'по теме "страна-столица" \n'
+                            f'/go для продолжения :white_check_mark:'))
 
 
 # раздел "новая игра", начало игры
-@dp.message_handler(commands=['play'])
+@dp.message_handler(commands=['go'])
 async def tutorial_guide(message: types.Message):
     global right_answer
     global question
@@ -186,8 +220,8 @@ async def tutorial_guide(message: types.Message):
     question_id = play_tuple[0]
     question = play_tuple[1]
     right_answer = play_tuple[2]
-    await message.reply(f'Напишите столицу страны "{question}"  \n'
-                        'либо /cancel, чтобы выйти')
+    await message.reply(emojis.encode(f'Напишите столицу страны "{question}"  \n \n'
+                        '/cancel :x: - для выхода'))
     await Form.play.set()
 
 
@@ -197,25 +231,71 @@ async def asking(message: types.Message, state: FSMContext):
     answer = message.text
     us_id = message.from_user.id
     if answer.lower() == right_answer.lower():
-        await message.reply(f'Верно! для продолжения /play, для выхода /cancel ')
+        await message.reply(emojis.encode(f'Верно! :eight_spoked_asterisk: \n'
+                            f' /go для продолжения :white_check_mark: \n \n '
+                            f'/fastrule - cоздать/изменить правило для {question} \n'
+                            f' /cancel :x: - для выхода'))
         await state.finish()
     elif answer == '/hint':
         must_find = str(us_id) + '_' + str(question_id)
         # await message.reply(question_id)
         # await message.reply(us_id)
-       #  await message.reply(must_find)
+        # await message.reply(must_find)
         try:
             cursor.execute(f"SELECT mnemonic_rule FROM user_rules WHERE user_id_plus_question = '{must_find}'")
             data = cursor.fetchone()
             data = str(*data)
-            await message.reply(f'Ваше мнемоническое правило для {question} "{data}", попробуйте отгадать ещё раз или /hint_max для ответа')
+            await message.reply(f'Ваше мнемоническое правило для {question} "{data}", попробуйте отгадать ещё раз\n'
+                                f'/hint_max - ответ')
         except:
-            await message.reply(f'У вас нет мнемонического правила для  "{question}", поробуйте отгадать ещё раз или /hint_max для ответа ')
+            await message.reply(f'У вас нет мнемонического правила для "{question}", поробуйте отгадать ещё раз \n'
+                                f' /hint_max - ответ')
     elif answer == '/hint_max':
         await state.finish()
-        await message.reply(f'Ответ: {right_answer}, для продолжения игры /play, список команд /help. Если хотите создать правило, нажмите /create')
+        await message.reply(emojis.encode(f'Ответ: {right_answer} \n'
+                                          f'/fastrule - cоздать/изменить правило для {question} \n'
+                                          f'/go - для продолжения :white_check_mark: \n \n '
+                                          f' /cancel :x: - для выхода'))
     else:
-        await message.reply('Неправильно, попробуйте ещё раз, для выхода /cancel, для получения подсказки /hint')
+        await message.reply(emojis.encode('Неправильно :red_circle: \n'
+                            'Попробуйте ещё раз \n'
+                            '/hint  - для подсказки \n \n'
+                            '/cancel :x: - для выхода'))
+
+@dp.message_handler(commands=['fastrule'])
+async def fast_create_rule(message: types.Message):
+    global question
+    global question_create
+    global question_create_answer
+    global flag
+    global must_find
+    cursor.execute(f"SELECT question_id, question, right_answer FROM questions_base WHERE question = '{question}'")
+    data = cursor.fetchall()
+    question_id = data[0][0]
+    question_create = data[0][1]
+    question_create_answer = data[0][2]
+    us_id = message.from_user.id
+    must_find = str(us_id) + '_' + str(question_id)
+    try:
+        cursor.execute(f"SELECT mnemonic_rule FROM users_rules WHERE mnemonic_rule = '{must_find}'")
+        data1 = cursor.fetchall()
+        await message.reply(f'Ваше текущее мнемоническое правило {data1}'
+                            f'Cейчас создадим новое, если вы не хотите, нажмите /cancel')
+        flag = 'update_pravilo'
+        await Form.pravilo.set()
+        await message.reply(f'Введите правило\n'
+                            f'Тема: {chosen_theme} \n'
+                            f'Вопрос: {question_create}\n'
+                            f'Ответ: {question_create_answer} \n')
+    except:
+        await message.reply(f'Введите правило\n'
+                            f'Тема: {chosen_theme} \n'
+                            f'Вопрос: {question_create}\n'
+                            f'Ответ: {question_create_answer} \n')
+        await Form.pravilo.set()
+        flag = 'create_pravilo'
+
+
 
 
 # раздел "правила", показать мнемонические правила
@@ -294,13 +374,13 @@ async def ust_pravilo(message: types.Message, state: FSMContext):
         await message.reply(f'Правило для {question_create} успешно обновлено "{pravilo}"')
         conn.commit()
         await state.finish()
-        await message.reply(f'Для продолжения игры нажмите /play, для выхода /cancel')
+        await message.reply(f'Для продолжения игры нажмите /go, для выхода /cancel')
     elif flag == 'create_pravilo':
         cursor.execute('INSERT INTO user_rules (user_id_plus_question, mnemonic_rule) VALUES (?, ?)', (must_find, pravilo))
         await message.reply(f'Правило для {question_create} успешно создано "{pravilo}"')
         conn.commit()
         await state.finish()
-        await message.reply(f'Для продолжения игры нажмите /play, для выхода /cancel')
+        await message.reply(f'Для продолжения игры нажмите /go, для выхода /cancel')
 
 
 # хэндлер для остальных сообщений
