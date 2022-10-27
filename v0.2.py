@@ -4,7 +4,6 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 import sqlite3
 import random as r
-import aiogram.utils.markdown as md
 import emojis
 
 bot = Bot(token="5648590997:AAELVsuYGkQ12pIpxRGWwus7Cl4rh5Fy_QQ")
@@ -15,6 +14,7 @@ conn = sqlite3.connect('all_in_one_base.db', check_same_thread=False)
 cursor = conn.cursor()
 lst = []
 
+#variables
 question = ''
 question_create = ''
 question_id = ''
@@ -55,6 +55,8 @@ async def send_welcome(message: types.Message):
     username = message.from_user.username
     try:
         db_table_val(user_id=us_id, user_name=us_name, user_surname=us_sname, username=username)
+    except:
+        pass
     finally:
         await message.reply(emojis.encode("Привет :wave:\n Выберите, пожалуйста, меню: \n"
                             "/subject - выбор темы для изучения \n"
@@ -198,7 +200,7 @@ async def new_train(message: types.Message):
         cursor.execute(f"SELECT question_id, question, right_answer FROM questions_base WHERE theme = '{chosen_theme}'")
         dict_ques_answ = cursor.fetchall()
         r.shuffle(dict_ques_answ)
-        await message.reply(emojis.encode(f'Тема не выбрана, сгененированы вопросы по теме "{chosen_theme}"\n'
+        await message.reply(emojis.encode(f'Сгененированы вопросы по теме "{chosen_theme}"\n'
                             f'/go для продолжения :white_check_mark:'))
     else:
         chosen_theme = 'страна-столица'
@@ -217,13 +219,17 @@ async def tutorial_guide(message: types.Message):
     global question
     global question_id
     play_tuple = dict_ques_answ.pop()
+    print(play_tuple)
     question_id = play_tuple[0]
     question = play_tuple[1]
     right_answer = play_tuple[2]
-    await message.reply(emojis.encode(f'Напишите столицу страны "{question}"  \n \n'
-                        '/cancel :x: - для выхода'))
+    if chosen_theme != 'флаг-страна':
+        await message.reply(emojis.encode(f' "{question}"  \n \n'
+                            '/cancel :x: - для выхода'))
+    else:
+        print(question)
+        await bot.send_photo(chat_id=message.chat.id, photo=question)
     await Form.play.set()
-
 
 # раздел "игра", проверка ответа
 @dp.message_handler(state=Form.play)
