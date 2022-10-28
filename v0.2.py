@@ -9,7 +9,6 @@ import emojis
 bot = Bot(token="5648590997:AAELVsuYGkQ12pIpxRGWwus7Cl4rh5Fy_QQ")
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
-
 conn = sqlite3.connect('all_in_one_base.db', check_same_thread=False)
 cursor = conn.cursor()
 lst = []
@@ -72,6 +71,29 @@ async def cancel_handler(message: types.Message, state: FSMContext):
                        "/technic - техники запоминания \n"
                        "/exam - начать заниматься")
 
+@dp.message_handler(commands=['subject'])
+async def show_subjects(message: types.Message):
+    global all_themes
+    cursor.execute('SELECT DISTINCT theme FROM questions_base')
+    print(all_themes)
+    all_themes = [i[0] for i in cursor.fetchall()]
+    await message.reply(emojis.encode('Выберите и напишите тему для занятий из предложенных: :arrow_down:'))
+    await message.reply('\n'.join(all_themes))
+    await Form.chose_theme.set()
+
+@dp.message_handler(state=Form.chose_theme)
+async def chose_theme(message: types.Message, state: FSMContext):
+    global chosen_theme
+    answer = message.text
+    if answer in all_themes:
+        chosen_theme = answer
+        await message.reply(emojis.encode(f'Тема установлена "{chosen_theme}"\n'
+                            f'Теперь вы можете начать заниматься или изучить техники мнемоники \n'
+                            f'/technic - техники запоминания :school_satchel: \n'
+                            f'/exam - начать заниматься :mortar_board:'))
+        await state.finish()
+    else:
+        await message.reply(emojis.encode('Данной темы нет в списке, попробуйте ещё раз. \nДля выхода нажмите /cancel :x: '))
 
 @dp.message_handler(commands=['technic'])
 async def show_subjects(message: types.Message):
@@ -92,55 +114,15 @@ async def show_subjects(message: types.Message):
                         , parse_mode='MARKDOWN')
 
 
-@dp.message_handler(commands=['subject'])
-async def show_subjects(message: types.Message):
-    global all_themes
-    cursor.execute('SELECT DISTINCT theme FROM questions_base')
-    all_themes = [i[0] for i in cursor.fetchall()]
-    await message.reply(emojis.encode('Выберите и напишите тему для занятий из предложенных: :arrow_down:'))
-    await message.reply('\n'.join(all_themes))
-    await Form.chose_theme.set()
-
-@dp.message_handler(state=Form.chose_theme)
-async def chose_theme(message: types.Message, state: FSMContext):
-    global chosen_theme
-    answer = message.text
-    if answer in all_themes:
-        chosen_theme = answer
-        await message.reply(emojis.encode(f'Тема установлена "{chosen_theme}"\n'
-                            f'Теперь вы можете начать заниматься или изучить техники мнемоники \n'
-                            f'/technic - техники запоминания :school_satchel: \n'
-                            f'/exam - начать заниматься :mortar_board:'))
-        await state.finish()
-    else:
-        await message.reply(emojis.encode('Данной темы нет в списке, попробуйте ещё раз. \nДля выхода нажмите /cancel :x: '))
 
 
 #бывший раздел HELP
 @dp.message_handler(commands=['help'])
 async def process_help_command(message: types.Message):
-    await message.reply("Доступны следующие команды:\n /register для регистрации  \n"
-                        "/train для обучения\n"
-                        " /newplay для игры \n"
-                        "/configure - посмотреть свои мнемонические правила \n"
-                        "/show_empty - показать пустые карточки \n"
-                        "/create - создать свои мнемонические карточки")
-
-
-#бывший раздел register Раздел register
-# @dp.message_handler(commands=['register'])
-# async def process_registration(message: types.Message):
-#     await message.reply('Приступим к регистрации!\n'
-#                         'Это нужно, чтобы ваши мнемонические правила и прогресс сохранялись')
-#     us_id = message.from_user.id
-#     us_name = message.from_user.first_name
-#     us_sname = message.from_user.last_name
-#     username = message.from_user.username
-#     try:
-#         db_table_val(user_id=us_id, user_name=us_name, user_surname=us_sname, username=username)
-#         await message.reply('Вы добавлены в базу пользователей!')
-#     except:
-#         await message.reply('Вы уже в базе пользователей!')
+    await message.reply(emojis.encode("Выберите, пожалуйста, меню: \n"
+                                      "/subject - выбор темы для изучения \n"
+                                      "/technic - техники запоминания \n"
+                                      "/exam - начать заниматься"))
 
 
 #Раздел train
@@ -244,18 +226,25 @@ async def asking(message: types.Message, state: FSMContext):
         await state.finish()
     elif answer == '/hint':
         must_find = str(us_id) + '_' + str(question_id)
-        # await message.reply(question_id)
-        # await message.reply(us_id)
-        # await message.reply(must_find)
         try:
             cursor.execute(f"SELECT mnemonic_rule FROM user_rules WHERE user_id_plus_question = '{must_find}'")
             data = cursor.fetchone()
             data = str(*data)
-            await message.reply(f'Ваше мнемоническое правило для {question} "{data}", попробуйте отгадать ещё раз\n'
-                                f'/hint_max - ответ')
+            if chosen_theme != 'флаг-страна':
+                await message.reply(f'Ваше мнемоническое правило для {question} "{data}", попробуйте отгадать ещё раз\n'
+                                    f'/hint_max - ответ')
+            else:
+                await bot.send_photo(message.chat.id, photo=question, caption="Ваше мнемоническое правило, попробуйте отгадать ещё раз\n /hint_max - ответ ")
+
         except:
-            await message.reply(f'У вас нет мнемонического правила для "{question}", поробуйте отгадать ещё раз \n'
-                                f' /hint_max - ответ')
+            if chosen_theme != 'флаг-страна':
+                await message.reply(f'У вас нет мнемонического правила для "{question}", поробуйте отгадать ещё раз \n'
+                                    f' /hint_max - ответ')
+            else:
+                await bot.send_photo(message.chat.id, photo=question, caption="У вас нет мнемонического правила для этого вопроса"
+                                                                              " поробуйте отгадать ещё раз \n /hint_max - ответ")
+
+
     elif answer == '/hint_max':
         await state.finish()
         await message.reply(emojis.encode(f'Ответ: {right_answer} \n'
@@ -365,7 +354,6 @@ async def chose_strana(message: types.Message, state: FSMContext):
         await Form.pravilo.set()
         await message.reply('Теперь введите правило')
         flag = 'create_pravilo'
-
 
 
 # раздел "правила", создание правила
