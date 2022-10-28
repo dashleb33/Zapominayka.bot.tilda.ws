@@ -55,7 +55,7 @@ async def send_welcome(message: types.Message):
     try:
         db_table_val(user_id=us_id, user_name=us_name, user_surname=us_sname, username=username)
     except:
-        pass
+        print('пользователь в базе')
     finally:
         await message.reply(emojis.encode("Привет :wave:\n Выберите, пожалуйста, меню: \n"
                             "/subject - выбор темы для изучения \n"
@@ -102,21 +102,43 @@ async def show_subjects(message: types.Message):
                         '_Краткое описание_: Техника основана на условном соответствии между согласными буквами и цифрами'
                         ' от :zero:  до :nine: . '
                         ' Дату необходимо перевести в слова, а из слов составить фразу связанную с запоминаемой датой \n'
+                        '/exam1 - для примера \n'
                         '\n'
                         '2._Название_:  :loop: *Метод синонимов* \n'
                         '_Краткое описание_: Техника основана на построении связной цепочки:chains:  '
                         'между словом которое необходимо запомнить со словами схожими по значению и лексическому толкованию с запоминаемым словом. \n'
-                        '\n'
+                        '/exam2 - для примера\n\n'
                         '3._Название_:  :wavy_dash: *Метод Ассоциаций* \n'
                         '_Краткое описание_: Метод основан на построении связи между двумя или более явлениями - '
-                        'Так, например, когда вы видите идущего с лыжами человека — вы вспоминаете о зиме (иными словами, лыжи:snowboarder:  ассоциируются с зимой:cold_face:'
-                        '\n \nДля выхода нажмите /cancel :x:')
+                        'Так, например, когда вы видите идущего с лыжами человека — вы вспоминаете о зиме (иными словами,'
+                        ' лыжи:snowboarder:  ассоциируются с зимой:cold_face:\n '
+                        '/exam3 - для примера'
+                        '\n\n Для выхода нажмите /cancel :x:')
                         , parse_mode='MARKDOWN')
+#примеры к правилам
+
+@dp.message_handler(commands=['exam1'])
+async def example_1(message: types.Message):
+    await message.reply(emojis.encode(f'_Пример_:  1-ГЖ. 2-ДТ. 3-КХ. 4-ЧЩ. 5-ПБ. 6-ШЛ. 7-СЗ. 8-ВФ. 9-РЦ. 0-НМ.\n1608 - год '
+                                      f'изобретения телескопа:telescope: . 1608 = 16 и 08. *Г*аи*ш*ник неводом вытащил телескоп.'
+                                      f'Г-1,Ш-6. Н-0, В-8. Гаишник:oncoming_police_car:  и невод:fishing_pole_and_fish: '
+                                      f' -ключевые слова, первые две согласных которых зашифрованы в цифры.'), parse_mode ='MARKDOWN')
+
+@dp.message_handler(commands=['exam2'])
+async def example_2(message: types.Message):
+    await message.reply(emojis.encode(f'Пример: Если Вам необходимо запомнить сложное словосочетание '
+                                      f'(международная конвенция),'
+                                      f' достаточно просто запомнить слова, близкие по значению к запоминаемым: '
+                                      f'международный :earth_asia: - мировой, конвенция :scroll: - условие.'), parse_mode ='MARKDOWN')
 
 
+@dp.message_handler(commands=['exam3'])
+async def example_3(message: types.Message):
+    await message.reply(emojis.encode(f'_Пример_: Необходимо запомнить два слова *КОТ* :cat:  и *МОЛОКО* :baby_bottle: . '
+                                      f'Связь при ассоциации должна быть необычной, нестандартной, невероятной.'
+                                      f'\n *КОТ* плавает:swimmer:  в стакане с *МОЛОКОМ*.'), parse_mode ='MARKDOWN')
 
 
-#бывший раздел HELP
 @dp.message_handler(commands=['help'])
 async def process_help_command(message: types.Message):
     await message.reply(emojis.encode("Выберите, пожалуйста, меню: \n"
@@ -166,8 +188,8 @@ async def asking(message: types.Message, state: FSMContext):
 async def process_exam_menu(message: types.Message):
     await message.reply("Доступны следующие команды: \n"
                         "/newtrain - проверка знаний \n"
-                        "/configure - посмотреть созданные мнемонические правила \n"
-                        "/show_empty - показать пустые карточки по выбранной теме\n"
+                        #"/configure - посмотреть созданные мнемонические правила \n"
+                        #"/show_empty - показать пустые карточки по выбранной теме\n"
                         "/create - создать мнемоническое правило")
 
 
@@ -243,8 +265,6 @@ async def asking(message: types.Message, state: FSMContext):
             else:
                 await bot.send_photo(message.chat.id, photo=question, caption="У вас нет мнемонического правила для этого вопроса"
                                                                               " поробуйте отгадать ещё раз \n /hint_max - ответ")
-
-
     elif answer == '/hint_max':
         await state.finish()
         await message.reply(emojis.encode(f'Ответ: {right_answer} \n'
@@ -289,7 +309,6 @@ async def fast_create_rule(message: types.Message):
                             f'Ответ: {question_create_answer} \n')
         await Form.pravilo.set()
         flag = 'create_pravilo'
-
 
 
 
@@ -380,7 +399,7 @@ async def ust_pravilo(message: types.Message, state: FSMContext):
 # хэндлер для остальных сообщений
 @dp.message_handler()
 async def process_registration(message: types.Message):
-    await message.reply('Пожалуйста, выберете команду из меню, для вызова команд наберите /help')
+    await message.reply('Пожалуйста, выберите команду из меню, для вызова команд наберите /help')
 
 
 if __name__ == '__main__':
