@@ -10,7 +10,7 @@ technic_1_btn = InlineKeyboardButton('Пример, метод ЦБК', callback
 technic_2_btn = InlineKeyboardButton('Пример, метод синонимов', callback_data='technic_2')
 technic_3_btn = InlineKeyboardButton('Пример, метод ассоциаций', callback_data='technic_3')
 cancel_btn = InlineKeyboardButton(emojis.encode('Выход :x:'), callback_data='cancel1')
-newtrain_btn = InlineKeyboardButton('Тренировка', callback_data='newtrain1')
+newtrain_btn = InlineKeyboardButton('Тренировка', callback_data='newtrain_1')
 go_btn = InlineKeyboardButton(emojis.encode('Начать :white_check_mark:'), callback_data='go1')
 fast_rule_btn = InlineKeyboardButton('Создать правило', callback_data='fast_rule1')
 hint_btn = InlineKeyboardButton('Посмотреть правило', callback_data='hint_btn')

@@ -1,16 +1,15 @@
 from Keyboards import *
 from work_with_base import *
 from aiogram import Bot, Dispatcher, executor, types
-from handlers.global_variables import *
+from handlers import global_variables as gv
 
 #@dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
-    global us_id
-    us_id = message.from_user.id
+    gv.us_id = message.from_user.id
     us_name = message.from_user.first_name
     us_sname = message.from_user.last_name
     username = message.from_user.username
-    await save_user_in_base(us_id,us_name, us_sname, username)
+    await save_user_in_base(gv.us_id, us_name, us_sname, username)
     await message.reply(emojis.encode("Привет :wave:\n Выберите, пожалуйста, меню: \n"),
                                         reply_markup=inline_kb)
 
@@ -18,11 +17,7 @@ async def send_welcome(message: types.Message):
 # ВЫЗОВ МЕНЮ
 #@dp.message_handler(commands=['help'])
 async def send_help(message: types.Message):
-    global us_id, us_name, us_sname, username
-    us_id = message.from_user.id
-    us_name = message.from_user.first_name
-    us_sname = message.from_user.last_name
-    username = message.from_user.username
+    gv.us_id = message.from_user.id
     await message.reply(emojis.encode("Привет :wave:\n Выберите, пожалуйста, меню: \n"
                                           "/subject - выбор темы для изучения \n"
                                           "/technic - техники запоминания \n"
