@@ -1,5 +1,4 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-import asyncio
 import emojis
 
 menu_btn = InlineKeyboardButton('Меню', callback_data='mmenu')

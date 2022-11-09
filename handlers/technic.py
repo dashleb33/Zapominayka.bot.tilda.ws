@@ -1,9 +1,6 @@
 from Keyboards import *
-from work_with_base import *
-from aiogram.dispatcher import FSMContext
-from aiogram import Bot, Dispatcher, executor, types
-from handlers.FSM import *
-from handlers.global_variables import *
+from aiogram import Dispatcher,  types
+
 
 # @dp.callback_query_handler(text='technic1')
 async def technic_call(callback: types.CallbackQuery):

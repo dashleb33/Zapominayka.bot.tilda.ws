@@ -1,9 +1,9 @@
 from Keyboards import *
 from work_with_base import *
 from aiogram.dispatcher import FSMContext
-from aiogram import Bot, Dispatcher, executor, types
+from aiogram import Dispatcher, executor, types
 from handlers.FSM import *
-from create_bot import dp, bot
+from create_bot import bot
 from handlers import global_variables as gv
 
 # ПРИСТУПИТЬ К ТРЕНИРОВКЕ

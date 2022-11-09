@@ -1,9 +1,6 @@
 from Keyboards import *
-from work_with_base import *
-from aiogram.dispatcher import FSMContext
-from aiogram import Bot, Dispatcher, executor, types
-from handlers.FSM import *
-from create_bot import dp, bot
+from aiogram import Dispatcher, types
+
 
 async def process_exam_menu(callback: types.CallbackQuery):
     await callback.message.answer("Доступны следующие команды: \n"

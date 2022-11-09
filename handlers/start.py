@@ -1,6 +1,6 @@
 from Keyboards import *
 from work_with_base import *
-from aiogram import Bot, Dispatcher, executor, types
+from aiogram import Dispatcher, types
 from handlers import global_variables as gv
 
 #@dp.message_handler(commands=['start'])

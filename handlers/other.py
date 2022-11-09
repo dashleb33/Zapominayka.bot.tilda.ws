@@ -1,9 +1,5 @@
-from Keyboards import *
-from work_with_base import *
-from aiogram.dispatcher import FSMContext
-from aiogram import Bot, Dispatcher, executor, types
-from handlers.FSM import *
-from create_bot import dp, bot
+from aiogram import Dispatcher, types
+
 
 # хэндлер для остальных сообщений
 #@dp.message_handler()
