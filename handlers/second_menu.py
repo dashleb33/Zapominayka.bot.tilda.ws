@@ -5,7 +5,7 @@ from aiogram import Dispatcher, types
 async def process_exam_menu(callback: types.CallbackQuery):
     await callback.message.answer("Доступны следующие команды: \n"
                                   "Тренировка - для проверки знаний \n"
-                                  "Правила - посмотреть своим мнемонические правила",
+                                  "Правила - посмотреть свои мнемонические правила",
                                   reply_markup=exam_kb)
     await callback.answer()
 

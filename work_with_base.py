@@ -75,3 +75,11 @@ async def is_there_question_in_base(quest_to_create_rule, chosen_theme):
     return is_there_this_question
 
 
+async def take_question_formulate(chosen_theme):
+    cursor.execute(f"SELECT question_for_theme "
+                   f"FROM theme_question "
+                   f"WHERE theme = '{chosen_theme}'")
+    take_question_itog = str(*cursor.fetchone())
+    return take_question_itog
+
+

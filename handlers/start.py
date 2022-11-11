@@ -10,7 +10,7 @@ async def send_welcome(message: types.Message):
     us_sname = message.from_user.last_name
     username = message.from_user.username
     await save_user_in_base(gv.us_id, us_name, us_sname, username)
-    await message.reply(emojis.encode("Привет :wave:\n Выберите, пожалуйста, меню: \n"),
+    await message.reply(emojis.encode("Привет :wave:\n Выберите, пожалуйста, пункт меню: \n"),
                                         reply_markup=inline_kb)
 
 

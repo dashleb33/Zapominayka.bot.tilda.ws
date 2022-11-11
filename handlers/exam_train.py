@@ -11,8 +11,10 @@ from handlers import global_variables as gv
 async def new_train(callback: types.CallbackQuery):
     if gv.chosen_theme:
         flag = True  # тема выбрана - печатаем с текстом "сгенерированы вопросы по теме"
+        gv.question_formulate = await take_question_formulate(gv.chosen_theme)
     else:
         gv.chosen_theme = 'страна-столица'
+        gv.question_formulate = await take_question_formulate(gv.chosen_theme)
         flag = False
     gv.dict_ques_answ = await select_questions_for_theme(gv.chosen_theme)
     if flag:
@@ -36,12 +38,12 @@ async def tutorial_guide(callback: types.CallbackQuery):
     gv.question = play_tuple[1]
     gv.right_answer = play_tuple[2]
     if gv.chosen_theme != 'флаг-страна':
-        await callback.message.answer(emojis.encode(f' "{gv.question}"  \n \n'
+        await callback.message.answer(emojis.encode(f'{gv.question_formulate} "{gv.question}"?  \n \n'
                                                     ),reply_markup=cancel_kb)
     else:
         print(gv.question)
         await bot.send_photo(chat_id=callback.message.chat.id, photo=gv.question)
-        await callback.message.answer(('текст'), reply_markup=cancel_kb)
+        await callback.message.answer((f'{gv.question_formulate}'), reply_markup=cancel_kb)
     await Form.play_1.set()
     await callback.answer()
 
@@ -53,7 +55,8 @@ async def asking(message: types.Message, state: FSMContext):
     us_id = message.from_user.id
     if answer.lower() == gv.right_answer.lower():
         await message.reply(emojis.encode(f'Верно! :eight_spoked_asterisk: \n'
-                                          f'/fastrule - cоздать/изменить правило для {gv.question} \n'
+                                          f'Cоздать мнемо-правило - cоздать/изменить мнемо-правило для вопроса \n'
+                                          f'{gv.question_formulate} "{gv.question}"? \n'
                                           ), reply_markup=correct_kb)
         await state.finish()
     else:
@@ -69,7 +72,7 @@ async def hint_call(callback: types.CallbackQuery, state: FSMContext):
     if user_rule_from_base:
         if gv.chosen_theme != 'флаг-страна':
             await callback.message.reply(
-                f'Ваше мнемоническое правило для {gv.question} "{user_rule_from_base}", попробуйте отгадать ещё раз\n'
+                f'Ваше мнемоническое правило для {gv.question_formulate} "{gv.question}"? "{user_rule_from_base}", попробуйте отгадать ещё раз\n'
                 f'/hint_max - ответ', reply_markup=un_correct_max_kb)
         else:
             await bot.send_photo(callback.message.chat.id, photo=gv.question,
@@ -78,12 +81,12 @@ async def hint_call(callback: types.CallbackQuery, state: FSMContext):
     else:
         if gv.chosen_theme != 'флаг-страна':
             await callback.message.reply(
-                f'У вас нет мнемонического правила для "{gv.question}", поробуйте отгадать ещё раз \n'
+                f'У вас нет мнемонического правила для "вопроса {gv.question_formulate} "{gv.question}"?", попробуйте отгадать ещё раз \n'
                 , reply_markup=un_correct_max_kb)
         else:
             await bot.send_photo(callback.message.chat.id, photo=gv.question,
                                  caption="У вас нет мнемонического правила для этого вопроса"
-                                         " поробуйте отгадать ещё раз",
+                                         " попробуйте отгадать ещё раз",
                                  reply_markup=un_correct_max_kb)
     await callback.answer()
 

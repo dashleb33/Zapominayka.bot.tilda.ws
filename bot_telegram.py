@@ -4,7 +4,6 @@ from create_bot import dp
 
 async def on_startup(_):
     await db_start()
-lst = []
 
 
 from handlers import subjects, start, cancel, technic, exam_train, rules, other, second_menu
