@@ -1,5 +1,4 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-import asyncio
 import emojis
 
 menu_btn = InlineKeyboardButton('Меню', callback_data='mmenu')
@@ -10,16 +9,16 @@ technic_1_btn = InlineKeyboardButton('Пример, метод ЦБК', callback
 technic_2_btn = InlineKeyboardButton('Пример, метод синонимов', callback_data='technic_2')
 technic_3_btn = InlineKeyboardButton('Пример, метод ассоциаций', callback_data='technic_3')
 cancel_btn = InlineKeyboardButton(emojis.encode('Выход :x:'), callback_data='cancel1')
-newtrain_btn = InlineKeyboardButton('Тренировка', callback_data='newtrain1')
+newtrain_btn = InlineKeyboardButton('Тренировка', callback_data='newtrain_1')
 go_btn = InlineKeyboardButton(emojis.encode('Начать :white_check_mark:'), callback_data='go1')
-fast_rule_btn = InlineKeyboardButton('Создать правило', callback_data='fast_rule1')
-hint_btn = InlineKeyboardButton('Посмотреть правило', callback_data='hint_btn')
+fast_rule_btn = InlineKeyboardButton('Создать мнемо-правило', callback_data='fast_rule1')
+hint_btn = InlineKeyboardButton('Посмотреть мнемо-правило', callback_data='hint_btn')
 hint_max_btn = InlineKeyboardButton('Ответ', callback_data='hint_max_btn')
 continue_btn = InlineKeyboardButton('Продолжить', callback_data='go1')
-rules_btn = InlineKeyboardButton(emojis.encode('Правила :scroll:'), callback_data='rules_btn')
+rules_btn = InlineKeyboardButton(emojis.encode('Мнемо-правила :scroll:'), callback_data='rules_btn')
 rules_show_btn = InlineKeyboardButton('Посмотреть созданные правила', callback_data='rules_show_btn')
-rules_create_btn = InlineKeyboardButton('Создать правило', callback_data='rules_create_btn')
-rules_create_show_quest_btn = InlineKeyboardButton('Создать правило', callback_data='rules_create_show_quest_btn')
+rules_create_btn = InlineKeyboardButton('Создать мнемо-правило', callback_data='rules_create_btn')
+rules_create_show_quest_btn = InlineKeyboardButton('Создать мнемо-правило', callback_data='rules_create_show_quest_btn')
 rules_show_questions = InlineKeyboardButton('Ещё примеры', callback_data='rules_create_show_next_btn')
 rules_show_next_rules_btn = InlineKeyboardButton('Ещё правила', callback_data='rules_show_next_rules_btn')
 
