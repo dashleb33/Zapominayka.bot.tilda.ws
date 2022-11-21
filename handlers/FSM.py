@@ -9,6 +9,7 @@ class Form(StatesGroup):
     prodolzhaem = State()
     chose_theme = State()
     chose_theme_btn = State()
+    chose_theme_for_rule = State()
     play_1 = State()
     mem_rule = State()
     mem_rule_crt = State()

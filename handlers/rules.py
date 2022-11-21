@@ -7,11 +7,22 @@ from create_bot import bot
 from handlers import global_variables as gv
 
 
+
 #@dp.callback_query_handler(text='rules_btn')
 async def rules_btn_menu(callback: types.CallbackQuery):
-    await callback.message.answer(f'Тема, на которую вы будете смотреть/создавать правила это "{gv.chosen_theme}" '
-                                  f'для выбора другой нажмите "Темы"', reply_markup=rule_kb)
+    await callback.message.answer(f'Выберите тему, на которую вы будете смотреть/создавать правила '
+                                  , reply_markup=kb_subjects)
+    await Form.chose_theme_for_rule.set()
     await callback.answer()
+
+
+async def chose_theme_rules(message: types.Message, state: FSMContext):
+    answer = message.text.lower()
+    gv.chosen_theme = answer
+    gv.question_formulate = await take_question_formulate(gv.chosen_theme)
+    await message.reply(emojis.encode(f'Тема установлена "{gv.chosen_theme}"\n'), reply_markup=rule_kb)
+    await state.finish()
+
 
 
 #@dp.callback_query_handler(state ='*', text='fast_rule1')
@@ -198,5 +209,4 @@ def register_handlers_rules(dp: Dispatcher):
     dp.register_callback_query_handler(create_button_1, state='*', text='rules_create_btn')
     dp.register_message_handler(rule_ask, state=Form.mem_rule)
     dp.register_message_handler(ust_pravilo, state=Form.mem_rule_crt)
-
-
+    dp.register_message_handler(chose_theme_rules, state=Form.chose_theme_for_rule)
