@@ -5,10 +5,7 @@ from aiogram.dispatcher import FSMContext
 #@dp.callback_query_handler(state='*', text='cancel1')
 async def cancel_call(callback: types.CallbackQuery, state: FSMContext):
     await state.finish()
-    await callback.message.answer("Вы вышли из режима, список доступных команд\n"
-                                  "Техники - для просмотра техник \n"
-                                  "Темы - для выбора темы запоминания\n"
-                                  "Начать - чтобы начать заниматься",
+    await callback.message.answer("Вы вышли в главное меню\n",
                                   reply_markup=inline_kb)
     await callback.answer()
 

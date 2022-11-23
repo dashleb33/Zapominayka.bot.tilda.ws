@@ -4,7 +4,7 @@ from aiogram import Dispatcher,  types
 
 # @dp.callback_query_handler(text='technic1')
 async def technic_call(callback: types.CallbackQuery):
-    await callback.message.answer(emojis.encode(f"В нашем боте используются следующие техники запоминания:"
+    await callback.message.answer(emojis.encode(f"В нашем боте используются следующие техники запоминания\n"
                                                 "1. :slot_machine: Метод ЦБК \n"
                                                 "Краткое описание: Техника основана на условном соответствии между "
                                                 "согласными буквами и цифрами "

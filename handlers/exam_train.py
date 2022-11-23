@@ -54,8 +54,8 @@ async def asking(message: types.Message, state: FSMContext):
     answer = message.text
     us_id = message.from_user.id
     if answer.lower() == gv.right_answer.lower():
-        await message.reply(emojis.encode(f'Верно! :eight_spoked_asterisk: \n'
-                                          f'Cоздать мнемо-правило - cоздать/изменить мнемо-правило для вопроса \n'
+        await message.reply(emojis.encode(f'Верно! \n'
+                                          f' \n'
                                           f'{gv.question_formulate} "{gv.question}"? \n'
                                           ), reply_markup=correct_kb)
         await state.finish()
