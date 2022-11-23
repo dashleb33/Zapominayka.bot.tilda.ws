@@ -18,12 +18,28 @@ async def new_train(callback: types.CallbackQuery):
         flag = False
     gv.dict_ques_answ = await select_questions_for_theme(gv.chosen_theme)
     if flag:
-        await callback.message.answer(emojis.encode(f'Сгененированы вопросы по теме "{gv.chosen_theme}"\n'),
-                                      reply_markup=go_kb)
+        await callback.message.answer(emojis.encode(f'Сгененированы вопросы по теме "{gv.chosen_theme}"\n'))
     else:
         await callback.message.answer(emojis.encode(f'Тема не выбрана, сгененированы вопросы '
-                                                    f'по теме "страна-столица" \n'), reply_markup=go_kb)
+                                                    f'по теме "страна-столица" \n'))
+    global right_answer
+    global question
+    global question_id
+    play_tuple = gv.dict_ques_answ.pop()
+    print(play_tuple)
+    gv.question_id = play_tuple[0]
+    gv.question = play_tuple[1]
+    gv.right_answer = play_tuple[2]
+    if gv.chosen_theme != 'флаг-страна':
+        await callback.message.answer(emojis.encode(f'{gv.question_formulate} "{gv.question}"?  \n \n'
+                                                    ),reply_markup=cancel_kb)
+    else:
+        print(gv.question)
+        await bot.send_photo(chat_id=callback.message.chat.id, photo=gv.question)
+        await callback.message.answer((f'{gv.question_formulate}'), reply_markup=cancel_kb)
+    await Form.play_1.set()
     await callback.answer()
+
 
 
 # НАЧАТЬ
@@ -60,9 +76,13 @@ async def asking(message: types.Message, state: FSMContext):
                                           ), reply_markup=correct_kb)
         await state.finish()
     else:
+        user_rule_from_base = await show_my_rule(us_id, gv.question_id)
+        print(user_rule_from_base)
+        keyboard = un_correct_ans_kb_yesrule if user_rule_from_base else un_correct_ans_kb_norule
+        print(keyboard)
         await message.reply(emojis.encode('Неправильно :red_circle: \n'
                                           'Попробуйте ещё раз \n'
-                                          ), reply_markup=un_correct_ans_kb)
+                                          ), reply_markup=keyboard)
 
 
 # @dp.callback_query_handler(text='hint_btn', state=Form.play_1)

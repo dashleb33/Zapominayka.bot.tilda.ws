@@ -31,7 +31,8 @@ technic_kb = InlineKeyboardMarkup(row_width=1).add(cancel_btn)  # Мнемоте
 exam_kb = InlineKeyboardMarkup(row_width=1).add(newtrain_btn, rules_btn, cancel_btn)  # Меню начала тренироки
 go_kb = InlineKeyboardMarkup(row_width=1).add(go_btn)  # начать тренировку
 correct_kb = InlineKeyboardMarkup(row_width=1).add(next_question, fast_rule_btn, cancel_btn)
-un_correct_ans_kb = InlineKeyboardMarkup(row_width=1).add(hint_btn, cancel_btn)
+un_correct_ans_kb_yesrule = InlineKeyboardMarkup(row_width=1).add(fast_rule_btn, hint_max_btn, cancel_btn)
+un_correct_ans_kb_norule = InlineKeyboardMarkup(row_width=1).add(fast_rule_btn, hint_max_btn, cancel_btn)
 un_correct_max_kb = InlineKeyboardMarkup(row_width=1).add(hint_max_btn)
 continue_kb = InlineKeyboardMarkup(row_width=1).add(continue_btn, cancel_btn)
 rule_kb = InlineKeyboardMarkup(row_width=1).add(rules_create_show_quest_btn, rules_show_btn, cancel_btn)
