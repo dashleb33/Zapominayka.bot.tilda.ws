@@ -24,6 +24,10 @@ rules_create_show_quest_btn = InlineKeyboardButton('Создать мнемо-п
 rules_show_questions = InlineKeyboardButton('Ещё примеры', callback_data='rules_create_show_next_btn')
 rules_show_next_rules_btn = InlineKeyboardButton('Ещё правила', callback_data='rules_show_next_rules_btn')
 link_to_site_btn = InlineKeyboardButton('Ещё правила на сайте', url = 'http://zapominayka.bot.tilda.ws/')
+example_1_1btn = InlineKeyboardButton('А поподробнее', callback_data='example_1_1')
+example_1_2btn = InlineKeyboardButton('О, а дальше', callback_data='example_1_2')
+inlineexample_1_1kb = InlineKeyboardMarkup(row_width=1).add(example_1_1btn, cancel_btn)
+inlineexample_1_2kb = InlineKeyboardMarkup(row_width=1).add(example_1_2btn, cancel_btn)
 
 inline_kb = InlineKeyboardMarkup(row_width=1).add(technic_btn, example_btn, subject_btn, newtrain_btn, rules_btn)  # Главное Меню
 inline_kb2 = InlineKeyboardMarkup(row_width=1).add(technic_btn, newtrain_btn, rules_btn)  # Меню после выбора темы
@@ -42,6 +46,8 @@ rule_kb = InlineKeyboardMarkup(row_width=1).add(rules_create_show_quest_btn, rul
 rule_kb_2 = InlineKeyboardMarkup(row_width=1).add(rules_create_btn, rules_show_questions,cancel_btn)
 rule_kb_3 = InlineKeyboardMarkup(row_width=1).add(rules_create_btn, rules_show_next_rules_btn,cancel_btn)
 example_kb = InlineKeyboardMarkup(row_width=1).add(example_1_btn, example_2_btn, example_3_btn, cancel_btn)
+example_kb_1 = InlineKeyboardMarkup(row_width=1).add(example_1_1btn)
+
 
 kb_subjects = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 b1 = KeyboardButton(text= 'страна-столица')

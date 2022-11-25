@@ -57,7 +57,7 @@ async def fast_create_rule(callback: types.CallbackQuery):
 #@dp.callback_query_handler(text='rules_show_btn')
 async def rules_show(callback: types.CallbackQuery):
         global all_rules
-        all_rules = await show_all_my_rules(gv.chosen_theme)
+        all_rules = await show_all_my_rules(gv.chosen_theme, gv.us_id)
         await callback.message.answer(f'Будут показаны мнемонические правила по теме: {gv.chosen_theme}')
         if all_rules:
             all_rules_5_f = all_rules[0:5]

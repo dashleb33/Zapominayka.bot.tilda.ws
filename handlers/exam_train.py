@@ -37,7 +37,8 @@ async def new_train(callback: types.CallbackQuery):
                                                     ),reply_markup=cancel_kb)
     else:
         print(gv.question)
-        await bot.send_photo(chat_id=callback.message.chat.id, photo=gv.photo)
+        if gv.photo:
+            await bot.send_photo(chat_id=callback.message.chat.id, photo=gv.photo)
         await callback.message.answer((f'{gv.question_formulate} {gv.question}'), reply_markup=cancel_kb)
     await Form.play_1.set()
     await callback.answer()
@@ -61,7 +62,8 @@ async def tutorial_guide(callback: types.CallbackQuery):
                                                     ),reply_markup=cancel_kb)
     else:
         print(gv.question)
-        await bot.send_photo(chat_id=callback.message.chat.id, photo=gv.photo)
+        if gv.photo:
+            await bot.send_photo(chat_id=callback.message.chat.id, photo=gv.photo)
         await callback.message.answer((f'{gv.question_formulate}'), reply_markup=cancel_kb)
     await Form.play_1.set()
     await callback.answer()
@@ -104,9 +106,14 @@ async def hint_call(callback: types.CallbackQuery, state: FSMContext):
                 f'Ваше мнемоническое правило для {gv.question_formulate} "{gv.question}"? "{user_rule_from_base}", попробуйте отгадать ещё раз\n'
                 f'', reply_markup=un_correct_max_kb)
         else:
-            await bot.send_photo(callback.message.chat.id, photo=gv.photo,
-                                 caption=f'Ваше мнемоническое правило "{user_rule_from_base}", попробуйте отгадать ещё раз\n '
-                                         , reply_markup=un_correct_max_kb)
+            if gv.photo:
+                await bot.send_photo(callback.message.chat.id, photo=gv.photo,
+                                    caption=f'Ваше мнемоническое правило "{user_rule_from_base}", попробуйте отгадать ещё раз\n '
+                                         ,reply_markup=un_correct_max_kb)
+            else:
+                await bot.send_message(callback.message.chat.id,
+                                     text=f'Ваше мнемоническое правило "{user_rule_from_base}", попробуйте отгадать ещё раз\n '
+                                     ,reply_markup=un_correct_max_kb)
     else:
         if gv.chosen_theme not in ['флаг-страна', 'архитектура, понятия']:
             await callback.message.reply(

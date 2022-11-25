@@ -19,6 +19,7 @@ async def chose_theme(message: types.Message, state: FSMContext):
     await message.reply(emojis.encode(f'Тема установлена "{gv.chosen_theme}"\n'
                                     f'Теперь вы можете начать заниматься'),
                             reply_markup=inline_kb)
+
     await state.finish()
 
 
