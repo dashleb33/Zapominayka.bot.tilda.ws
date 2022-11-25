@@ -79,9 +79,15 @@ async def asking(message: types.Message, state: FSMContext):
                                           ), reply_markup=correct_kb)
         await state.finish()
     else:
+        global user_rule_from_base
         user_rule_from_base = await show_my_rule(us_id, gv.question_id)
         print(user_rule_from_base)
-        keyboard = un_correct_ans_kb_yesrule if user_rule_from_base else un_correct_ans_kb_norule
+        if user_rule_from_base:
+            print('it not empty')
+            keyboard = un_correct_ans_kb_yesrule
+        else:
+            print('it empty')
+            keyboard = un_correct_ans_kb_norule
         print(keyboard)
         await message.reply(emojis.encode('Неправильно :red_circle: \n'
                                           'Попробуйте ещё раз \n'
@@ -91,23 +97,23 @@ async def asking(message: types.Message, state: FSMContext):
 # @dp.callback_query_handler(text='hint_btn', state=Form.play_1)
 async def hint_call(callback: types.CallbackQuery, state: FSMContext):
     us_id = callback.message.from_user.id
-    user_rule_from_base = await show_my_rule(us_id, gv.question_id)
+    print(user_rule_from_base)
     if user_rule_from_base:
-        if gv.chosen_theme != 'флаг-страна':
+        if gv.chosen_theme not in ['флаг-страна', 'архитектура, понятия']:
             await callback.message.reply(
                 f'Ваше мнемоническое правило для {gv.question_formulate} "{gv.question}"? "{user_rule_from_base}", попробуйте отгадать ещё раз\n'
-                f'/hint_max - ответ', reply_markup=un_correct_max_kb)
+                f'', reply_markup=un_correct_max_kb)
         else:
-            await bot.send_photo(callback.message.chat.id, photo=gv.question,
-                                 caption="Ваше мнемоническое правило, попробуйте отгадать ещё раз\n /hint_max - "
-                                         "ответ ", reply_markup=un_correct_max_kb)
+            await bot.send_photo(callback.message.chat.id, photo=gv.photo,
+                                 caption=f'Ваше мнемоническое правило "{user_rule_from_base}", попробуйте отгадать ещё раз\n '
+                                         , reply_markup=un_correct_max_kb)
     else:
-        if gv.chosen_theme != 'флаг-страна':
+        if gv.chosen_theme not in ['флаг-страна', 'архитектура, понятия']:
             await callback.message.reply(
                 f'У вас нет мнемонического правила для "вопроса {gv.question_formulate} "{gv.question}"?", попробуйте отгадать ещё раз \n'
                 , reply_markup=un_correct_max_kb)
         else:
-            await bot.send_photo(callback.message.chat.id, photo=gv.question,
+            await bot.send_photo(callback.message.chat.id, photo=gv.photo,
                                  caption="У вас нет мнемонического правила для этого вопроса"
                                          " попробуйте отгадать ещё раз",
                                  reply_markup=un_correct_max_kb)
