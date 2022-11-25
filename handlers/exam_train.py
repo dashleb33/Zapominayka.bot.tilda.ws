@@ -25,18 +25,20 @@ async def new_train(callback: types.CallbackQuery):
     global right_answer
     global question
     global question_id
+    global photo
     play_tuple = gv.dict_ques_answ.pop()
     print(play_tuple)
     gv.question_id = play_tuple[0]
     gv.question = play_tuple[1]
     gv.right_answer = play_tuple[2]
-    if gv.chosen_theme != 'флаг-страна':
+    gv.photo = play_tuple[3]
+    if gv.chosen_theme not in ['флаг-страна', 'архитектура, понятия']:
         await callback.message.answer(emojis.encode(f'{gv.question_formulate} "{gv.question}"?  \n \n'
                                                     ),reply_markup=cancel_kb)
     else:
         print(gv.question)
-        await bot.send_photo(chat_id=callback.message.chat.id, photo=gv.question)
-        await callback.message.answer((f'{gv.question_formulate}'), reply_markup=cancel_kb)
+        await bot.send_photo(chat_id=callback.message.chat.id, photo=gv.photo)
+        await callback.message.answer((f'{gv.question_formulate} {gv.question}'), reply_markup=cancel_kb)
     await Form.play_1.set()
     await callback.answer()
 
@@ -53,12 +55,13 @@ async def tutorial_guide(callback: types.CallbackQuery):
     gv.question_id = play_tuple[0]
     gv.question = play_tuple[1]
     gv.right_answer = play_tuple[2]
-    if gv.chosen_theme != 'флаг-страна':
+    gv.photo = play_tuple[3]
+    if gv.chosen_theme not in ['флаг-страна', 'архитектура, понятия']:
         await callback.message.answer(emojis.encode(f'{gv.question_formulate} "{gv.question}"?  \n \n'
                                                     ),reply_markup=cancel_kb)
     else:
         print(gv.question)
-        await bot.send_photo(chat_id=callback.message.chat.id, photo=gv.question)
+        await bot.send_photo(chat_id=callback.message.chat.id, photo=gv.photo)
         await callback.message.answer((f'{gv.question_formulate}'), reply_markup=cancel_kb)
     await Form.play_1.set()
     await callback.answer()

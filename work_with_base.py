@@ -26,7 +26,7 @@ async def select_all_themes_from_base():
 
 
 async def select_questions_for_theme(chosen_theme):
-    cursor.execute(f"SELECT question_id, question, right_answer FROM questions_base WHERE theme = '{chosen_theme}'")
+    cursor.execute(f"SELECT question_id, question, right_answer, link FROM questions_base WHERE theme = '{chosen_theme}'")
     dict_ques_answ = cursor.fetchall()
     r.shuffle(dict_ques_answ)
     return dict_ques_answ
