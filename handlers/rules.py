@@ -101,7 +101,7 @@ async def rules_create_show_next(callback: types.CallbackQuery):
     global dict_ques_answ
     prom = dict_ques_answ[0:5]
     for_print = [(f"Вопрос: {question}, "
-                  f"Ответ: {answer}") for number, question, answer in prom]
+                  f"Ответ: {answer}") for number, question, answer, *other in prom]
     await callback.message.answer('\n'.join(for_print), reply_markup=rule_kb_2, parse_mode='MARKDOWN')
     dict_ques_answ = dict_ques_answ[5:]
 
@@ -127,16 +127,22 @@ async def rules_create_show_next_2(callback: types.CallbackQuery):
 async def rules_create_show_next_3(callback: types.CallbackQuery):
     global dict_ques_answ
     prom = dict_ques_answ[0:5]
-    if gv.chosen_theme not in ['флаг-страна']:
+    if gv.chosen_theme not in ['флаг-страна', 'архитектура, понятия']:
         for_print = [(f"Вопрос: {gv.question_formulate} '{question}'?, "
-                      f"Ответ: {answer}") for number, question, answer in prom]
+                      f"Ответ: {answer}") for number, question, answer, *other in prom]
         await callback.message.answer('\n'.join(for_print), reply_markup=rule_kb_2, parse_mode='MARKDOWN')
         dict_ques_answ = dict_ques_answ[5:]
     else:
         for i in prom:
-            number, question, answer = i
-            await bot.send_photo(chat_id=callback.message.chat.id, photo=question)
+            number, question, answer, link = i
+            if link:
+                await bot.send_photo(chat_id=callback.message.chat.id, photo=link)
+            await bot.send_message(chat_id=callback.message.chat.id, text=(f"Вопрос: {gv.question_formulate} '{question}'?, "))
             await callback.message.answer(f'Ответ: {answer}')
+        await bot.send_message(chat_id=callback.message.chat.id,
+                               text=(f"Хотите создать правило для одного из вопросов выше?"),
+                               reply_markup = rule_kb_2)
+
 
 #@dp.callback_query_handler(text='rules_create_btn')
 async def create_button_1(callback: types.CallbackQuery):

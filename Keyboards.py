@@ -23,11 +23,14 @@ rules_create_btn = InlineKeyboardButton('Создать мнемо-правил�
 rules_create_show_quest_btn = InlineKeyboardButton('Создать мнемо-правило', callback_data='rules_create_show_quest_btn')
 rules_show_questions = InlineKeyboardButton('Ещё примеры', callback_data='rules_create_show_next_btn')
 rules_show_next_rules_btn = InlineKeyboardButton('Ещё правила', callback_data='rules_show_next_rules_btn')
+link_to_site_btn = InlineKeyboardButton('Ещё правила на сайте', url = 'http://zapominayka.bot.tilda.ws/')
 
 inline_kb = InlineKeyboardMarkup(row_width=1).add(technic_btn, example_btn, subject_btn, newtrain_btn, rules_btn)  # Главное Меню
 inline_kb2 = InlineKeyboardMarkup(row_width=1).add(technic_btn, newtrain_btn, rules_btn)  # Меню после выбора темы
 cancel_kb = InlineKeyboardMarkup(row_width=1).add(cancel_btn)  # Возврат в меню
-technic_kb = InlineKeyboardMarkup(row_width=1).add(cancel_btn)  # Мнемотехники
+technic_kb = InlineKeyboardMarkup(row_width=1).add(link_to_site_btn, cancel_btn)  # Мнемотехники
+
+
 exam_kb = InlineKeyboardMarkup(row_width=1).add(newtrain_btn, rules_btn, cancel_btn)  # Меню начала тренироки
 go_kb = InlineKeyboardMarkup(row_width=1).add(go_btn)  # начать тренировку
 correct_kb = InlineKeyboardMarkup(row_width=1).add(next_question, fast_rule_btn, cancel_btn)
