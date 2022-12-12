@@ -16,10 +16,8 @@ async def chose_theme(message: types.Message, state: FSMContext):
     answer = message.text.lower()
     gv.chosen_theme = answer
     gv.question_formulate = await take_question_formulate(gv.chosen_theme)
-    await message.reply(emojis.encode(f'Тема установлена "{gv.chosen_theme}"\n'
-                                    f'Теперь вы можете начать заниматься'),
-                            reply_markup=inline_kb)
-
+    await message.reply(f'Тема установлена "{gv.chosen_theme}"', reply_markup = types.ReplyKeyboardRemove())
+    await message.reply(f'Теперь вы можете начать заниматься', reply_markup=inline_kb)
     await state.finish()
 
 

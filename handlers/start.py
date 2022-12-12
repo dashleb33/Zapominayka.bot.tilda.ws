@@ -26,8 +26,8 @@ async def send_welcome_yes(message: types.Message):
     us_sname = message.from_user.last_name
     username = message.from_user.username
     await message.reply(emojis.encode("Отлично! :muscle: \n "
-                                      "Мы поможем тебе натренировать применение мнемо-правил\n"
-                                      ))
+                                      "Мы поможем тебе натренировать применение мнемо-правил\n"),
+                        reply_markup = types.ReplyKeyboardRemove())
 
     await bot.send_message(chat_id =message.from_user.id,
                            text=emojis.encode("Краткое инфо по разделам:\n"
