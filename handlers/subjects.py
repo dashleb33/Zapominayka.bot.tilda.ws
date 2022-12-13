@@ -7,6 +7,8 @@ from handlers import global_variables as gv
 
 #@dp.callback_query_handler(text='subject1')
 async def show_subjects(callback: types.CallbackQuery):
+    id_1 = callback.message.chat.id
+    await add_user_and_date_in_base(id_1)
     await callback.message.answer('Выберите тему из предложенных', reply_markup=kb_subjects)
     await Form.chose_theme_btn.set()
     await callback.answer()

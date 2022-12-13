@@ -1,9 +1,12 @@
 from Keyboards import *
 from aiogram import Dispatcher,  types
 from create_bot import bot
+from work_with_base import add_user_and_date_in_base
 
 # @dp.callback_query_handler(text='examples')
 async def example_call(callback: types.CallbackQuery):
+    id_1 = callback.message.chat.id
+    await add_user_and_date_in_base(id_1)
     await callback.message.answer(emojis.encode(f"Здесь можно посмотреть примеры техник")
                                   , parse_mode='MARKDOWN', reply_markup=example_kb)
     await callback.answer()

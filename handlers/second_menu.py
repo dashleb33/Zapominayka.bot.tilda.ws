@@ -1,8 +1,10 @@
 from Keyboards import *
 from aiogram import Dispatcher, types
-
+from work_with_base import add_user_and_date_in_base
 
 async def process_exam_menu(callback: types.CallbackQuery):
+    id_1 = callback.message.chat.id
+    await add_user_and_date_in_base(id_1)
     await callback.message.answer("Доступны следующие команды: \n"
                                   "Тренировка - для проверки знаний \n"
                                   "Правила - посмотреть свои мнемонические правила",

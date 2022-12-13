@@ -1,6 +1,6 @@
 import sqlite3
 import random as r
-
+from datetime import date
 
 async def db_start():
     global conn, cursor
@@ -16,6 +16,17 @@ async def save_user_in_base(user_id: int, user_name: str, user_surname: str, use
             conn.commit()
         else:
             print('user in base')
+        today = date.today()
+        user_today = cursor.execute(f"SELECT * "
+                                    f"FROM active_users "
+                                    f"WHERE user_id = '{user_id}' and date_interaction = '{today}'").fetchone()
+        if not user_today:
+            print("user wasn't in base today")
+            cursor.execute('INSERT INTO active_users (user_id, date_interaction) VALUES (?, ?)',(user_id, today))
+            conn.commit()
+            print("user added to base")
+        else:
+            print('today user already work with bot')
 
 
 async def select_all_themes_from_base():
@@ -84,4 +95,46 @@ async def take_question_formulate(chosen_theme):
     take_question_itog = str(*cursor.fetchone())
     return take_question_itog
 
+async def add_user_and_date_in_base(user_id: int):
+    today = date.today()
+    user_today = cursor.execute(f"SELECT * "
+                                f"FROM active_users "
+                                f"WHERE user_id = '{user_id}' and date_interaction = '{today}'").fetchone()
+    if not user_today:
+        print("user wasn't in base today")
+        cursor.execute('INSERT INTO active_users (user_id, date_interaction) VALUES (?, ?)', (user_id, today))
+        conn.commit()
+        print("user added to base")
+    else:
+        print('today user already work with bot')
 
+async def get_number_users_per_day(day):
+    today = day
+    user_today = cursor.execute(f"SELECT user_id "
+                                f"FROM active_users "
+                                f"WHERE date_interaction = '{today}'").fetchall()
+    print(user_today)
+    print(len(user_today))
+    return (len(user_today))
+
+
+async def add_question_to_base(user_id, question_id, quantity_right_answers, theme, quantity_answers=1):
+    today = date.today()
+    is_there_this_question = cursor.execute(f"SELECT * "
+                                            f"FROM statistics_question "
+                                            f"WHERE user_id = '{user_id}' and date = '{today}'"
+                                            f"and question_id = '{question_id}'").fetchall()
+    print(is_there_this_question)
+    if not is_there_this_question:
+        print('no question in base')
+        cursor.execute('INSERT INTO statistics_question (user_id, question_id, quantity_answers, quantity_right_answers, date, theme) VALUES (?, ?, ?,?, ?, ? )', (user_id, question_id, quantity_answers,quantity_right_answers, today, theme ))
+        conn.commit()
+        print("user and his question add to base")
+    else:
+        user_id, question_id, quantity_answers_in_base, quantity_right_answers_in_base, dataa, theme = is_there_this_question[0]
+        quantity_right_answers_final = quantity_right_answers + quantity_right_answers_in_base
+        quantity_answers_final = quantity_answers_in_base + quantity_answers
+        print(f'quantity_answers_final {quantity_answers_final}')
+        cursor.execute(f"UPDATE statistics_question SET quantity_answers = '{quantity_answers_final}', quantity_right_answers = '{quantity_right_answers_final}' "
+                       f"WHERE user_id  = '{user_id}' AND question_id  = '{question_id}' AND date = '{today}' ")
+        conn.commit()

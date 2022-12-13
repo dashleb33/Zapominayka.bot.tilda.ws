@@ -13,3 +13,4 @@ class Form(StatesGroup):
     play_1 = State()
     mem_rule = State()
     mem_rule_crt = State()
+    admin_statistics = State()
