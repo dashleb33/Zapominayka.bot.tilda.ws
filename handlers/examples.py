@@ -26,12 +26,12 @@ async def example_1_def(callback: types.CallbackQuery):
 
 # @dp.callback_query_handler(text='example_2')
 async def example_2_def(callback: types.CallbackQuery):
-    await callback.message.answer(f'Если Вам необходимо запомнить сложное словосочетание '
+    await callback.message.answer(emojis.encode(f'Если Вам необходимо запомнить сложное словосочетание '
                                                 f'(международная конвенция),'
                                                 f' достаточно просто запомнить слова, близкие по значению к '
                                                 f'запоминаемым: '
-                                                f'международный :earth_asia: - мировой, конвенция :scroll: - условие.',
-                                  parse_mode='MARKDOWN', reply_markup=cancel_kb)
+                                                f'международный :earth_asia: - мировой, конвенция :scroll: - условие.'),
+                                  reply_markup=cancel_kb)
     await callback.answer()
 
 
@@ -73,8 +73,8 @@ async def example_1_2def(callback: types.CallbackQuery):
 
 def register_handlers_examples(dp: Dispatcher):
     dp.register_callback_query_handler(example_call, state = '*', text='examples')
-    dp.register_callback_query_handler(example_1_def, state='*', text='example_1')
     dp.register_callback_query_handler(example_2_def, state='*', text='example_2')
     dp.register_callback_query_handler(example_3_def, state='*', text='example_3')
+    dp.register_callback_query_handler(example_1_def, state='*', text='example_1')
     dp.register_callback_query_handler(example_1_1def, state='*', text='example_1_1')
     dp.register_callback_query_handler(example_1_2def, state='*', text='example_1_2')
