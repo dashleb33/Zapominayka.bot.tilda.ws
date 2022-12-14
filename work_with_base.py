@@ -138,3 +138,28 @@ async def add_question_to_base(user_id, question_id, quantity_right_answers, the
         cursor.execute(f"UPDATE statistics_question SET quantity_answers = '{quantity_answers_final}', quantity_right_answers = '{quantity_right_answers_final}' "
                        f"WHERE user_id  = '{user_id}' AND question_id  = '{question_id}' AND date = '{today}' ")
         conn.commit()
+
+async def get_statistics_right_answers(user_id, theme):
+    select_from_base = cursor.execute(f"SELECT question_id "
+                                    f"FROM statistics_question "
+                                    f"WHERE user_id = '{user_id}' and (quantity_right_answers/quantity_answers) > 0.5 "
+                                    f"AND theme = '{theme}'").fetchall()
+    right_answers = len(select_from_base)
+    return right_answers
+   # all_questions = len(cursor.execute(f"SELECT question_id FROM questions_base WHERE theme = '{theme}'").fetchall())
+   # return (right_answers*100/all_questions)
+
+async def get_statistics_all_answers(user_id, theme):
+    select_from_base_all_answers = cursor.execute(f"SELECT question_id "
+                                    f"FROM statistics_question "
+                                    f"WHERE user_id = '{user_id}'"
+                                    f"AND theme = '{theme}'").fetchall()
+    all_answers = len(select_from_base_all_answers)
+    return all_answers
+
+async def get_statistics_get_all_questions(user_id, theme):
+    all_questions = cursor.execute(f"SELECT question_id "
+                                   f"FROM questions_base "
+                                   f"WHERE theme = '{theme}'").fetchall()
+    all_questions = len(all_questions)
+    return all_questions

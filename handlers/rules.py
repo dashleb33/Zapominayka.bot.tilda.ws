@@ -10,8 +10,6 @@ from handlers import global_variables as gv
 
 #@dp.callback_query_handler(text='rules_btn')
 async def rules_btn_menu(callback: types.CallbackQuery):
-    id_1 = callback.message.chat.id
-    await add_user_and_date_in_base(id_1)
     await callback.message.answer(f'Выберите тему, на которую вы будете смотреть/создавать правила '
                                   , reply_markup=kb_subjects)
     await Form.chose_theme_for_rule.set()
@@ -19,6 +17,8 @@ async def rules_btn_menu(callback: types.CallbackQuery):
 
 
 async def chose_theme_rules(message: types.Message, state: FSMContext):
+    gv.us_id = message.from_user.id
+    await add_user_and_date_in_base(gv.us_id)
     answer = message.text.lower()
     gv.chosen_theme = answer
     gv.question_formulate = await take_question_formulate(gv.chosen_theme)

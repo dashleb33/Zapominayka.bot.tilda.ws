@@ -29,7 +29,9 @@ example_1_2btn = InlineKeyboardButton('О, а дальше', callback_data='exam
 inlineexample_1_1kb = InlineKeyboardMarkup(row_width=1).add(example_1_1btn, cancel_btn)
 inlineexample_1_2kb = InlineKeyboardMarkup(row_width=1).add(example_1_2btn, cancel_btn)
 
-inline_kb = InlineKeyboardMarkup(row_width=1).add(technic_btn, example_btn, subject_btn, newtrain_btn, rules_btn)  # Главное Меню
+statistics_btn_user =  InlineKeyboardButton('Статистика', callback_data='statistics_btn')
+
+inline_kb = InlineKeyboardMarkup(row_width=1).add(technic_btn, example_btn, subject_btn, newtrain_btn, rules_btn, statistics_btn_user)  # Главное Меню
 inline_kb2 = InlineKeyboardMarkup(row_width=1).add(technic_btn, newtrain_btn, rules_btn)  # Меню после выбора темы
 cancel_kb = InlineKeyboardMarkup(row_width=1).add(cancel_btn)  # Возврат в меню
 technic_kb = InlineKeyboardMarkup(row_width=1).add(link_to_site_btn, cancel_btn)  # Мнемотехники
@@ -79,3 +81,7 @@ kb_menu_statistics = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard
 btoday = KeyboardButton(text = ('сегодня'))
 b7day = KeyboardButton(text = ('7 дней'))
 kb_menu_statistics.add(btoday, b7day)
+kb_startistics = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+b_byday = KeyboardButton(text = ('День'))
+b_bytheme = KeyboardButton(text = ('Тема'))
+kb_startistics.add(b_byday, b_bytheme)

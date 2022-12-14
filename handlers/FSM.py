@@ -14,3 +14,5 @@ class Form(StatesGroup):
     mem_rule = State()
     mem_rule_crt = State()
     admin_statistics = State()
+    user_statistics = State()
+    user_statistics2 = State()
