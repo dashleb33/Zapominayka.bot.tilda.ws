@@ -122,21 +122,21 @@ async def add_question_to_base(user_id, question_id, quantity_right_answers, the
     today = date.today()
     is_there_this_question = cursor.execute(f"SELECT * "
                                             f"FROM statistics_question "
-                                            f"WHERE user_id = '{user_id}' and date = '{today}'"
+                                            f"WHERE user_id = '{user_id}' "
                                             f"and question_id = '{question_id}'").fetchall()
     print(is_there_this_question)
     if not is_there_this_question:
         print('no question in base')
-        cursor.execute('INSERT INTO statistics_question (user_id, question_id, quantity_answers, quantity_right_answers, date, theme) VALUES (?, ?, ?,?, ?, ? )', (user_id, question_id, quantity_answers,quantity_right_answers, today, theme ))
+        cursor.execute('INSERT INTO statistics_question (user_id, question_id, quantity_answers, quantity_right_answers,  theme) VALUES (?, ?,?, ?, ? )', (user_id, question_id, quantity_answers,quantity_right_answers, theme))
         conn.commit()
         print("user and his question add to base")
     else:
-        user_id, question_id, quantity_answers_in_base, quantity_right_answers_in_base, dataa, theme = is_there_this_question[0]
+        user_id, question_id, quantity_answers_in_base, quantity_right_answers_in_base, theme = is_there_this_question[0]
         quantity_right_answers_final = quantity_right_answers + quantity_right_answers_in_base
         quantity_answers_final = quantity_answers_in_base + quantity_answers
         print(f'quantity_answers_final {quantity_answers_final}')
         cursor.execute(f"UPDATE statistics_question SET quantity_answers = '{quantity_answers_final}', quantity_right_answers = '{quantity_right_answers_final}' "
-                       f"WHERE user_id  = '{user_id}' AND question_id  = '{question_id}' AND date = '{today}' ")
+                       f"WHERE user_id  = '{user_id}' AND question_id  = '{question_id}'")
         conn.commit()
 
 async def get_statistics_right_answers(user_id, theme):
@@ -165,9 +165,18 @@ async def get_statistics_get_all_questions(user_id, theme):
 async def get_uncorrest_statics(user_id, theme):
     select_from_base_uncorrect_questions = cursor.execute(f"SELECT question_id "
                                     f"FROM statistics_question "
-                                    f"WHERE user_id = '{user_id}' and (quantity_right_answers/quantity_answers) < 0.5 "
+                                    f"WHERE user_id = '{user_id}' and (quantity_right_answers*10/quantity_answers)<5 "
                                     f"AND theme = '{theme}'").fetchall()
     uncorrest_ans = select_from_base_uncorrect_questions
-    print(uncorrest_ans)
+    print(f' bad {uncorrest_ans}')
     return uncorrest_ans
 
+
+async def get_statistics_get_good_questions(user_id, theme):
+    select_from_base_good_questions = cursor.execute(f"SELECT question_id "
+                                    f"FROM statistics_question "
+                                    f"WHERE user_id = '{user_id}' and (quantity_right_answers*10/quantity_answers) >= 5 "
+                                    f"AND theme = '{theme}'").fetchall()
+    correct_ans = select_from_base_good_questions
+    print(f' good_ques {correct_ans}')
+    return correct_ans

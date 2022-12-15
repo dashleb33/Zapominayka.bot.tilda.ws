@@ -22,6 +22,7 @@ async def chose_theme_rules(message: types.Message, state: FSMContext):
     answer = message.text.lower()
     gv.chosen_theme = answer
     gv.question_formulate = await take_question_formulate(gv.chosen_theme)
+    await message.reply(emojis.encode("Отлично!"), reply_markup = types.ReplyKeyboardRemove())
     await message.reply(emojis.encode(f'Тема установлена "{gv.chosen_theme}"\n'), reply_markup=rule_kb)
     await state.finish()
 
@@ -64,7 +65,7 @@ async def rules_show(callback: types.CallbackQuery):
         if all_rules:
             all_rules_5_f = all_rules[0:5]
             if gv.chosen_theme not in ['флаг-страна']:
-                for_print2 = [(f"Вопрос: {gv.question_formulate} '{gv.question}'?, "
+                for_print2 = [(f"Вопрос: {gv.question_formulate} '{question}'?, "
                                f"Ответ: {answer}, "
                                f"Мнемо-правило: {rule}") for question, answer, rule in all_rules_5_f]
                 await callback.message.answer('\n'.join(for_print2), reply_markup=rule_kb_3, parse_mode='MARKDOWN')
@@ -86,10 +87,10 @@ async def rules_show_next_rules(callback: types.CallbackQuery):
     global all_rules
     if all_rules:
         all_rules_5_f = all_rules[0:5]
-        for_print2 = [(f"Вопрос: {question}, "
+
+        for_print2 = [(f"Вопрос: {gv.question_formulate} '{question}'?, "
                        f"Ответ: {answer}, "
-                       f"Мнемо-правило: {rule}") for answer, question, rule in
-                      all_rules_5_f]
+                       f"Мнемо-правило: {rule}") for question, answer, rule in all_rules_5_f]
         await callback.message.answer('\n'.join(for_print2), reply_markup=rule_kb_3, parse_mode='MARKDOWN')
         all_rules = all_rules[5:]
     else:

@@ -21,13 +21,17 @@ async def new_train(callback: types.CallbackQuery):
         flag = False
     problem_ques = await get_uncorrest_statics(id_1, gv.chosen_theme)
     all_ques = await get_statistics_get_all_questions(id_1, gv.chosen_theme)
+    good_ques = await get_statistics_get_good_questions(id_1, gv.chosen_theme)
     problem_ques = [i[0] for i in problem_ques]
+    good_ques = [i[0] for i in good_ques]
     shuffle(problem_ques)
     all_ques = [i[0] for i in all_ques]
     set_problem_ques = set(problem_ques)
     set_all_ques = set(all_ques)
-    difference_set = list(set_all_ques.difference(set_problem_ques))
-    total_list = problem_ques + difference_set
+    set_good_ques = set(good_ques)
+    difference_set = set_all_ques.difference(set_problem_ques)
+    difference_set = list(difference_set.difference(set_good_ques))
+    total_list = problem_ques + difference_set + good_ques
     gv.dict_ques_answ = await select_questions_for_theme(gv.chosen_theme)
     print(gv.dict_ques_answ)
     gv.dict_ques_answ.sort(key=lambda x: total_list.index(x[0]))
