@@ -29,13 +29,16 @@ async def statistics_theme(message: types.Message, state: FSMContext):
     answer = message.text.lower()
     gv.us_id = message.from_user.id
     right_answers = await get_statistics_right_answers(gv.us_id, answer)
+    right_answers = len(right_answers)
     all_answers = await get_statistics_all_answers(gv.us_id, answer)
+    all_answers = len(all_answers)
     all_questions = await get_statistics_get_all_questions(gv.us_id, answer)
+    all_questions = len(all_questions)
     usvoenie_temi = round(right_answers*100/all_questions, 2)
     otv_na_vopr = round(right_answers*100/all_questions, 2)
-    await bot.send_message(chat_id= message.from_user.id,
-                           text=f'Процент усвоения темы {usvoenie_temi}% \n'
-                                f'Количество ответов(с верностью более 50%) {right_answers} из {all_answers} отвеченных \n'
+    await bot.send_message(chat_id=message.from_user.id,
+                           text=f'Процент усвоения темы {usvoenie_temi}% \n\n'
+                                f'Количество ответов(с верностью более 50%) {right_answers} из {all_answers} отвеченных \n\n'
                                 f'Всего дано ответов на {all_answers} из {all_questions} содержащихся в базе вопросов')
 
 

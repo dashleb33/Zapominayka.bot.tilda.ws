@@ -5,6 +5,7 @@ from aiogram import Dispatcher, executor, types
 from handlers.FSM import *
 from create_bot import bot
 from handlers import global_variables as gv
+from random import shuffle
 
 # ПРИСТУПИТЬ К ТРЕНИРОВКЕ
 # @dp.callback_query_handler(text='newtrain1')
@@ -18,7 +19,20 @@ async def new_train(callback: types.CallbackQuery):
         gv.chosen_theme = 'страна-столица'
         gv.question_formulate = await take_question_formulate(gv.chosen_theme)
         flag = False
+    problem_ques = await get_uncorrest_statics(id_1, gv.chosen_theme)
+    all_ques = await get_statistics_get_all_questions(id_1, gv.chosen_theme)
+    problem_ques = [i[0] for i in problem_ques]
+    shuffle(problem_ques)
+    all_ques = [i[0] for i in all_ques]
+    set_problem_ques = set(problem_ques)
+    set_all_ques = set(all_ques)
+    difference_set = list(set_all_ques.difference(set_problem_ques))
+    total_list = problem_ques + difference_set
     gv.dict_ques_answ = await select_questions_for_theme(gv.chosen_theme)
+    print(gv.dict_ques_answ)
+    gv.dict_ques_answ.sort(key=lambda x: total_list.index(x[0]))
+    gv.dict_ques_answ = gv.dict_ques_answ[::-1]
+    print(gv.dict_ques_answ)
     if flag:
         await callback.message.answer(emojis.encode(f'Сгененированы вопросы по теме "{gv.chosen_theme}"\n'))
     else:

@@ -9,7 +9,7 @@ example_btn = InlineKeyboardButton('Примеры📔', callback_data='examples
 example_1_btn = InlineKeyboardButton('Пример, метод ЦБК', callback_data='example_1')
 example_2_btn = InlineKeyboardButton('Пример, метод синонимов', callback_data='example_2')
 example_3_btn = InlineKeyboardButton('Пример, метод ассоциаций', callback_data='example_3')
-cancel_btn = InlineKeyboardButton(emojis.encode('Выход :x:'), callback_data='cancel1')
+cancel_btn = InlineKeyboardButton(emojis.encode('Главное меню :x:'), callback_data='cancel1')
 newtrain_btn = InlineKeyboardButton('Тренировка💪', callback_data='newtrain_1')
 go_btn = InlineKeyboardButton(emojis.encode('Начать :white_check_mark:'), callback_data='go1')
 next_question = InlineKeyboardButton(emojis.encode('Следующий вопрос :white_check_mark:'), callback_data='go1')
@@ -29,7 +29,7 @@ example_1_2btn = InlineKeyboardButton('О, а дальше', callback_data='exam
 inlineexample_1_1kb = InlineKeyboardMarkup(row_width=1).add(example_1_1btn, cancel_btn)
 inlineexample_1_2kb = InlineKeyboardMarkup(row_width=1).add(example_1_2btn, cancel_btn)
 
-statistics_btn_user =  InlineKeyboardButton('Статистика', callback_data='statistics_btn')
+statistics_btn_user =  InlineKeyboardButton('Статистика📈', callback_data='statistics_btn')
 
 inline_kb = InlineKeyboardMarkup(row_width=1).add(technic_btn, example_btn, subject_btn, newtrain_btn, rules_btn, statistics_btn_user)  # Главное Меню
 inline_kb2 = InlineKeyboardMarkup(row_width=1).add(technic_btn, newtrain_btn, rules_btn)  # Меню после выбора темы

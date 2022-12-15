@@ -144,8 +144,7 @@ async def get_statistics_right_answers(user_id, theme):
                                     f"FROM statistics_question "
                                     f"WHERE user_id = '{user_id}' and (quantity_right_answers/quantity_answers) > 0.5 "
                                     f"AND theme = '{theme}'").fetchall()
-    right_answers = len(select_from_base)
-    return right_answers
+    return select_from_base
    # all_questions = len(cursor.execute(f"SELECT question_id FROM questions_base WHERE theme = '{theme}'").fetchall())
    # return (right_answers*100/all_questions)
 
@@ -154,12 +153,21 @@ async def get_statistics_all_answers(user_id, theme):
                                     f"FROM statistics_question "
                                     f"WHERE user_id = '{user_id}'"
                                     f"AND theme = '{theme}'").fetchall()
-    all_answers = len(select_from_base_all_answers)
-    return all_answers
+    return select_from_base_all_answers
 
 async def get_statistics_get_all_questions(user_id, theme):
     all_questions = cursor.execute(f"SELECT question_id "
                                    f"FROM questions_base "
                                    f"WHERE theme = '{theme}'").fetchall()
-    all_questions = len(all_questions)
+    print(all_questions)
     return all_questions
+
+async def get_uncorrest_statics(user_id, theme):
+    select_from_base_uncorrect_questions = cursor.execute(f"SELECT question_id "
+                                    f"FROM statistics_question "
+                                    f"WHERE user_id = '{user_id}' and (quantity_right_answers/quantity_answers) < 0.5 "
+                                    f"AND theme = '{theme}'").fetchall()
+    uncorrest_ans = select_from_base_uncorrect_questions
+    print(uncorrest_ans)
+    return uncorrest_ans
+
