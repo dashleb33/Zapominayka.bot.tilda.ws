@@ -12,19 +12,13 @@ from handlers import global_variables as gv
 async def statistics_btn_menu(callback: types.CallbackQuery):
     await bot.send_message(chat_id= callback.message.chat.id,
                            text=emojis.encode(
-                               "Выберите, какую статистику получить"),
-                           reply_markup=kb_startistics)
+                               "Выберите по какой теме посмотреть % усвоения"),
+                           reply_markup=kb_subjects)
     await Form.user_statistics.set()
-
-#выбор темы
-async def statistics_chose_theme(message: types.Message, state: FSMContext):
-    await message.reply(emojis.encode(f'Выберите тему '), reply_markup=kb_subjects)
-    await Form.user_statistics2.set()
-
 
 
 #Вывод статы по теме
-#@dp.callback_query_handler(state ='user_statistics2')
+#@dp.callback_query_handler(state ='user_statistics')
 async def statistics_theme(message: types.Message, state: FSMContext):
     answer = message.text.lower()
     gv.us_id = message.from_user.id
@@ -48,7 +42,6 @@ async def statistics_theme(message: types.Message, state: FSMContext):
 
 def register_handlers_user_stat(dp: Dispatcher):
     dp.register_callback_query_handler(statistics_btn_menu, state = '*', text='statistics_btn')
-    dp.register_message_handler(statistics_chose_theme, state=Form.user_statistics)
-    dp.register_message_handler(statistics_theme, state=Form.user_statistics2)
+    dp.register_message_handler(statistics_theme, state=Form.user_statistics)
 
 

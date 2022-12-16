@@ -52,14 +52,14 @@ async def show_my_rule(us_id, question_id):
     return user_rule_from_base
 
 
-async def select_everything_for_rule(question):
-    cursor.execute(f"SELECT question_id, question, right_answer FROM questions_base WHERE question = '{question}'")
+async def select_everything_for_rule(question_id):
+    cursor.execute(f"SELECT question_id, question, right_answer, link FROM questions_base WHERE question_id = '{question_id}'")
     row_with_question_from_base = cursor.fetchone()
     return row_with_question_from_base
 
 
 async def show_all_my_rules(chosen_theme, us_id):
-    all_rules = cursor.execute(f"SELECT question, right_answer, mnemonic_rule "
+    all_rules = cursor.execute(f"SELECT question, right_answer, mnemonic_rule, link "
                                f"FROM questions_base INNER JOIN user_rules_2 "
                                f"ON questions_base.question_id = user_rules_2.question_id "
                                f"WHERE mnemonic_rule IS NOT NULL "

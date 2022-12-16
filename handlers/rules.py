@@ -32,7 +32,8 @@ async def chose_theme_rules(message: types.Message, state: FSMContext):
 async def fast_create_rule(callback: types.CallbackQuery):
     global question, question_create, question_create_answer, question_id
     global flag
-    question_id, question_create, question_create_answer, *other = await select_everything_for_rule(gv.question)
+    print(gv.question_id)
+    question_id, question_create, question_create_answer, *other = await select_everything_for_rule(gv.question_id)
     us_id = callback.message.from_user.id
     user_rule_from_base = await show_my_rule(us_id, question_id)
     if user_rule_from_base:
@@ -65,17 +66,17 @@ async def rules_show(callback: types.CallbackQuery):
         if all_rules:
             all_rules_5_f = all_rules[0:5]
             if gv.chosen_theme not in ['флаг-страна']:
-                for_print2 = [(f"Вопрос: {gv.question_formulate} '{question}'?, "
-                               f"Ответ: {answer}, "
-                               f"Мнемо-правило: {rule}") for question, answer, rule in all_rules_5_f]
+                for_print2 = [(f"Вопрос: {gv.question_formulate} '{question}'?, \n "
+                               f"Ответ: {answer}, \n "
+                               f"Мнемо-правило: {rule} \n") for question, answer, rule, link in all_rules_5_f]
                 await callback.message.answer('\n'.join(for_print2), reply_markup=rule_kb_3, parse_mode='MARKDOWN')
             else:
                 for i in all_rules_5_f:
-                    question, answer, rule, *other = i
-                    await bot.send_photo(chat_id=callback.message.chat.id, photo=question)
-                    await callback.message.answer(f'Вопрос: {gv.question_formulate}?'
-                                                  f'Ответ: {answer}, '
-                                                  f'Мнемо-правило: {rule}')
+                    question, answer, rule, link = i
+                    await bot.send_photo(chat_id=callback.message.chat.id, photo=link)
+                    await callback.message.answer(f'Вопрос: {gv.question_formulate} {question}? \n'
+                                                  f'Ответ: {answer}, \n'
+                                                  f'Мнемо-правило: {rule} \n')
                 await callback.message.answer('Показать еще правила?', reply_markup=rule_kb_3, parse_mode='MARKDOWN')
             all_rules = all_rules[5:]
         else:
@@ -87,12 +88,21 @@ async def rules_show_next_rules(callback: types.CallbackQuery):
     global all_rules
     if all_rules:
         all_rules_5_f = all_rules[0:5]
-
-        for_print2 = [(f"Вопрос: {gv.question_formulate} '{question}'?, "
-                       f"Ответ: {answer}, "
-                       f"Мнемо-правило: {rule}") for question, answer, rule in all_rules_5_f]
-        await callback.message.answer('\n'.join(for_print2), reply_markup=rule_kb_3, parse_mode='MARKDOWN')
-        all_rules = all_rules[5:]
+        if gv.chosen_theme not in ['флаг-страна']:
+            for_print2 = [(f"Вопрос: {gv.question_formulate} '{question}'?, \n "
+                           f"Ответ: {answer}, \n "
+                           f"Мнемо-правило: {rule} \n ") for question, answer, rule, link in all_rules_5_f]
+            await callback.message.answer('\n'.join(for_print2), reply_markup=rule_kb_3, parse_mode='MARKDOWN')
+            all_rules = all_rules[5:]
+        else:
+            for i in all_rules_5_f:
+                question, answer, rule, link = i
+                await bot.send_photo(chat_id=callback.message.chat.id, photo=link)
+                await callback.message.answer(f'Вопрос: {gv.question_formulate} {question}? \n'
+                                                  f'Ответ: {answer}, \n '
+                                                  f'Мнемо-правило: {rule} \n')
+                await callback.message.answer('Показать еще правила?', reply_markup=rule_kb_3, parse_mode='MARKDOWN')
+            all_rules = all_rules[5:]
     else:
         await callback.message.answer('Мнемо-правил больше нет', reply_markup=rule_kb_3)
 
