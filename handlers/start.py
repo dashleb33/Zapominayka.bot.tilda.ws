@@ -15,7 +15,7 @@ async def send_welcome1(message: types.Message):
     username = message.from_user.username
     await save_user_in_base(gv.us_id, us_name, us_sname, username)
     await message.reply(emojis.encode("Привет! :wave:\n Перед тем как мы начнем учиться я хочу спросить,"
-                                      "ты знаешь, что такое мнемоправила? \n"),
+                                      "вы знаете, что такое мнемоправила? \n"),
                                         reply_markup=kb_menu_do_you_know)
 
 
@@ -26,7 +26,7 @@ async def send_welcome_yes(message: types.Message):
     us_sname = message.from_user.last_name
     username = message.from_user.username
     await message.reply(emojis.encode("Отлично! :muscle: \n "
-                                      "Мы поможем тебе натренировать применение мнемо-правил\n"),
+                                      "Мы поможем вам натренировать применение мнемо-правил\n"),
                         reply_markup = types.ReplyKeyboardRemove())
 
     await bot.send_message(chat_id =message.from_user.id,
@@ -45,7 +45,7 @@ async def send_welcome_no(message: types.Message):
     gv.us_id = message.from_user.id
     await bot.send_message(chat_id =message.from_user.id,
                            text=emojis.encode(
-                               "Мнемонические правила – это то, что поможет тебе запомнить информацию просто"),
+                               "Мнемонические правила – это то, что поможет вам запомнить информацию просто"),
                            reply_markup=kb_how)
 
 async def send_welcome_no2(message: types.Message):
